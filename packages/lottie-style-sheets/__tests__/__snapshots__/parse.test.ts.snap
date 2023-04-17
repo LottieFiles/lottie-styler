@@ -1,0 +1,82 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`parse 1`] = `
+Object {
+  "children": Array [
+    Object {
+      "children": Array [
+        Object {
+          "important": undefined,
+          "property": "fill-color",
+          "type": "declaration",
+          "value": "red",
+        },
+        Object {
+          "important": undefined,
+          "property": "opacity",
+          "type": "declaration",
+          "value": "0.2",
+        },
+      ],
+      "selectors": Array [
+        Object {
+          "type": "id-selector",
+          "value": "id1",
+        },
+        Object {
+          "type": "id-selector",
+          "value": "id2",
+        },
+        Object {
+          "type": "id-selector",
+          "value": "id3",
+        },
+      ],
+      "type": "rule",
+    },
+    Object {
+      "children": Array [
+        Object {
+          "important": undefined,
+          "property": "stoke-color",
+          "type": "declaration",
+          "value": "#fff",
+        },
+      ],
+      "selectors": Array [
+        Object {
+          "type": "class-selector",
+          "value": "class1",
+        },
+        Object {
+          "type": "class-selector",
+          "value": "class2",
+        },
+        Object {
+          "type": "class-selector",
+          "value": "class3",
+        },
+      ],
+      "type": "rule",
+    },
+    Object {
+      "children": Array [
+        Object {
+          "important": undefined,
+          "property": "fill-rule",
+          "type": "declaration",
+          "value": "solid",
+        },
+      ],
+      "selectors": Array [
+        Object {
+          "type": "class-selector",
+          "value": "class",
+        },
+      ],
+      "type": "rule",
+    },
+  ],
+  "type": "root",
+}
+`;
