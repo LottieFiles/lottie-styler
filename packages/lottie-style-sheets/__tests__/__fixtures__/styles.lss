@@ -1,0 +1,12 @@
+#id1, #id2, #id3 {
+    fill-color: red;
+    opacity: 0.2;
+}
+
+.class1, .class2, .class3 {
+    stoke-color: #fff;
+}
+
+.class {
+    fill-rule: solid;
+}
