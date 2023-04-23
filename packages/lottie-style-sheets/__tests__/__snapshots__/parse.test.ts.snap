@@ -18,19 +18,11 @@ Object {
           "value": "0.2",
         },
       ],
+      "selector": "#id1, #id2, #id3",
       "selectors": Array [
-        Object {
-          "type": "id-selector",
-          "value": "id1",
-        },
-        Object {
-          "type": "id-selector",
-          "value": "id2",
-        },
-        Object {
-          "type": "id-selector",
-          "value": "id3",
-        },
+        "#id1",
+        "#id2",
+        "#id3",
       ],
       "type": "rule",
     },
@@ -43,19 +35,11 @@ Object {
           "value": "#fff",
         },
       ],
+      "selector": ".class1, .class2, .class3",
       "selectors": Array [
-        Object {
-          "type": "class-selector",
-          "value": "class1",
-        },
-        Object {
-          "type": "class-selector",
-          "value": "class2",
-        },
-        Object {
-          "type": "class-selector",
-          "value": "class3",
-        },
+        ".class1",
+        ".class2",
+        ".class3",
       ],
       "type": "rule",
     },
@@ -68,11 +52,9 @@ Object {
           "value": "solid",
         },
       ],
+      "selector": ".class",
       "selectors": Array [
-        Object {
-          "type": "class-selector",
-          "value": "class",
-        },
+        ".class",
       ],
       "type": "rule",
     },

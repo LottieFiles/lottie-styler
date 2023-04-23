@@ -6,19 +6,7 @@ import type { Parent as UnistParent, Literal as UnistLiteral } from 'unist';
 
 export type RootType = 'root';
 export type RuleType = 'rule';
-export type ClassSelectorType = 'class-selector';
-export type IdSelectorType = 'id-selector';
 export type DeclarationType = 'declaration';
-
-export interface ClassSelector extends UnistLiteral {
-  type: ClassSelectorType;
-  value: string;
-}
-
-export interface IdSelector extends UnistLiteral {
-  type: IdSelectorType;
-  value: string;
-}
 
 export interface Declaration extends UnistLiteral {
   important: boolean;
@@ -29,7 +17,8 @@ export interface Declaration extends UnistLiteral {
 
 export interface Rule extends UnistParent {
   children: Declaration[];
-  selectors: Array<IdSelector | ClassSelector>;
+  selector: string;
+  selectors: string[];
   type: RuleType;
 }
 
