@@ -37,7 +37,7 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GPR_TOKEN }}
 
-      - name: Run linting
+      - name: Run build
         run: pnpm build
 
       - name: Run linting
