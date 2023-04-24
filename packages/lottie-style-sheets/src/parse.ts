@@ -5,31 +5,8 @@
 import { parse as parseCss } from 'postcss';
 import { u } from 'unist-builder';
 
-import { CLASS_SELECTOR_TYPE, DELARATION_TYPE, ID_SELECTOR_TYPE, RULE_TYPE, ROOT_TYPE } from './constants';
-import type { ClassSelector, Declaration, IdSelector, Rule, Root } from './types';
-import { isClassSelector, isIdSelector, stripSelectorPrefix } from './utils';
-
-const createLssSelectors = (selectors: string[]): Array<IdSelector | ClassSelector> => {
-  const lssSelectors = [];
-
-  for (const selector of selectors) {
-    if (isClassSelector(selector)) {
-      lssSelectors.push(
-        u(CLASS_SELECTOR_TYPE, {
-          value: stripSelectorPrefix(selector),
-        }),
-      );
-    } else if (isIdSelector(selector)) {
-      lssSelectors.push(
-        u(ID_SELECTOR_TYPE, {
-          value: stripSelectorPrefix(selector),
-        }),
-      );
-    }
-  }
-
-  return lssSelectors;
-};
+import { DELARATION_TYPE, RULE_TYPE, ROOT_TYPE } from './constants';
+import type { Declaration, Rule, Root } from './types';
 
 export function parse(source: string): Root {
   const root: Root = u(ROOT_TYPE, []);
@@ -41,13 +18,13 @@ export function parse(source: string): Root {
       RULE_TYPE,
       {
         selectors: [],
+        selector: '',
       },
       [],
     );
 
-    const selectors = createLssSelectors(rule.selectors);
-
-    ruleNode.selectors.push(...selectors);
+    ruleNode.selectors = [...rule.selectors];
+    ruleNode.selector = rule.selector;
 
     rule.walkDecls((decl) => {
       const declNode: Declaration = u(DELARATION_TYPE, {
