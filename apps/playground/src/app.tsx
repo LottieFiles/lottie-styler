@@ -49,7 +49,7 @@ const useStyler = (lss: string, lottie?: string): string | undefined => {
 
 const App: React.FC = () => {
   const [lss, setLss] = useState(
-    `/* Lottie Style Sheets (.LSS) */\n\n#cloud{\n fill-color: red;\n}\n\n.cloud-stroke{ \n stroke-color: black;\n}\n\n.sea{\n fill-color: #F3F666;\n}`,
+    `/* Lottie Style Sheets (.LSS) */\n\n#cloud{\n fill-color: red;\n}\n\n.cloud-borders{ \n stroke-color: black;\n}\n\n.sea{\n fill-color: #F3F666;\n}`,
   );
 
   const lottie = useLottie();
