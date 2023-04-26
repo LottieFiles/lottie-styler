@@ -10,7 +10,7 @@ import React, { useEffect, useState } from 'react';
 import { useAsyncFn, useSearchParam } from 'react-use';
 
 const useLottie = (): string | undefined => {
-  const fileUrl = useSearchParam('fileUrl');
+  const fileUrl = useSearchParam('fileUrl') || './animation.json';
   const [state, run] = useAsyncFn(async (url: string) => {
     const response = await fetch(url);
     const text = await response.text();
@@ -48,7 +48,9 @@ const useStyler = (lss: string, lottie?: string): string | undefined => {
 };
 
 const App: React.FC = () => {
-  const [lss, setLss] = useState('');
+  const [lss, setLss] = useState(
+    `/* Lottie Style Sheets (.LSS) */\n\n#cloud{\n fill-color: red;\n}\n\n.cloud-stroke{ \n stroke-color: black;\n}\n\n.sea{\n fill-color: #F3F666;\n}`,
+  );
 
   const lottie = useLottie();
   const styledLottie = useStyler(lss, lottie);
@@ -76,7 +78,7 @@ const App: React.FC = () => {
         <CodeEditor
           value={lss}
           language="css"
-          placeholder={`/* Lottie Style Sheets (.LSS) */\n\n#shapeId{\n fill-color: red;\n}`}
+          placeholder={`/* Lottie Style Sheets (.LSS) */\n\n#cloud{\n fill-color: red;\n}`}
           onChange={(event: React.ChangeEvent<HTMLTextAreaElement>): void => {
             setLss(event.target.value);
           }}
