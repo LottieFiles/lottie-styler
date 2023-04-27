@@ -139,7 +139,7 @@ const apply = (root: ObjectNode, styles: NormalizedStyles): void => {
           const rgba = styles[prop] as RGBAColor;
 
           visit(root, 'primitive', (node, index, parent) => {
-            if (parent?.title === 'color-rgba-children' && typeof index === 'number') {
+            if (parent?.title === 'static-value-children' && typeof index === 'number') {
               node.value = rgba[index] as number;
             }
           });
