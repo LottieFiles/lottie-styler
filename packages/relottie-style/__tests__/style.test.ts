@@ -16,6 +16,7 @@ test('styling fill shape', async () => {
       lss: `
       .background {
         fill-color: blue;
+        fill-rule: 2;
       }
     `,
     })

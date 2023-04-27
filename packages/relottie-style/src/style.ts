@@ -83,6 +83,7 @@ type RGBAColor = [number, number, number, number];
 
 interface NormalizedStyles {
   'fill-color'?: RGBAColor;
+  'fill-rule'?: number;
   'solid-color'?: string;
   'stroke-color'?: RGBAColor;
   'stroke-width'?: number;
@@ -90,6 +91,10 @@ interface NormalizedStyles {
 
 const isColorProperty = (prop: string): boolean => {
   return prop.includes('-color');
+};
+
+const isValidFillRule = (value: string): boolean => {
+  return value === '1' || value === '2';
 };
 
 const normalizeStyles = (declarations: Declaration[]): NormalizedStyles => {
@@ -119,6 +124,8 @@ const normalizeStyles = (declarations: Declaration[]): NormalizedStyles => {
       }
     } else if (declaration.property === 'stroke-width') {
       styles['stroke-width'] = Number(declaration.value);
+    } else if (declaration.property === 'fill-rule' && isValidFillRule(declaration.value)) {
+      styles['fill-rule'] = Number(declaration.value);
     }
   }
 
@@ -177,6 +184,16 @@ const apply = (root: ObjectNode, styles: NormalizedStyles): void => {
           visit(root, 'attribute', (attr) => {
             if (attr.title === 'hex-color' && attr.children[0]?.value) {
               attr.children[0].value = styles[prop] as string;
+            }
+          });
+        }
+        break;
+
+      case 'fill-rule':
+        if (root.title === 'shape-fill') {
+          visit(root, 'attribute', (attr) => {
+            if (attr.title === 'fill-rule' && attr.children[0]?.value) {
+              attr.children[0].value = styles[prop] as number;
             }
           });
         }
