@@ -4,11 +4,10 @@
 
 import type { ObjectNode, Root } from '@lottiefiles/last';
 import { parse as parseLss } from '@lottiefiles/lottie-style-sheets';
-import type { Rule, Declaration } from '@lottiefiles/lottie-style-sheets';
+import type { Declaration } from '@lottiefiles/lottie-style-sheets';
 import { colord, extend } from 'colord';
 import namesPlugin from 'colord/plugins/names';
 import type { Transformer, Plugin } from 'unified';
-import { is } from 'unist-util-is';
 import { visit } from 'unist-util-visit';
 
 extend([namesPlugin]);
@@ -17,7 +16,7 @@ export interface Options {
   lss: string;
 }
 
-const canStyleShapeTitles = ['shape-fill', 'shape-stroke'];
+const canStyleShapeTitles = ['shape-fill', 'shape-stroke', 'layer-solid-color'];
 
 const hasClassName = (root: ObjectNode, className: string): boolean => {
   return root.children.some(
@@ -84,6 +83,7 @@ type RGBAColor = [number, number, number, number];
 
 interface NormalizedStyles {
   'fill-color'?: RGBAColor;
+  'solid-color'?: string;
   'stroke-color'?: RGBAColor;
   'stroke-width'?: number;
 }
@@ -108,6 +108,10 @@ const normalizeStyles = (declarations: Declaration[]): NormalizedStyles => {
 
         case 'stroke-color':
           styles['stroke-color'] = value;
+          break;
+
+        case 'solid-color':
+          styles['solid-color'] = colord(declaration.value).toHex();
           break;
 
         default:
@@ -168,6 +172,16 @@ const apply = (root: ObjectNode, styles: NormalizedStyles): void => {
         }
         break;
 
+      case 'solid-color':
+        if (root.title === 'layer-solid-color') {
+          visit(root, 'attribute', (attr) => {
+            if (attr.title === 'hex-color' && attr.children[0]?.value) {
+              attr.children[0].value = styles[prop] as string;
+            }
+          });
+        }
+        break;
+
       default:
         break;
     }
@@ -178,14 +192,12 @@ const relottieStyle: Plugin<[Options?], Root, Root> = (options: Options = { lss:
   const transformer: Transformer<Root> = async (last: Root): Promise<void> => {
     const lssast = parseLss(options.lss);
 
-    visit(lssast, (node) => {
-      if (is<Rule>(node, 'rule')) {
-        const lastNodes = querySelectorAll(last, node.selectors);
-        const styles = normalizeStyles(node.children);
+    visit(lssast, 'rule', (node) => {
+      const lastNodes = querySelectorAll(last, node.selectors);
+      const styles = normalizeStyles(node.children);
 
-        for (const lastNode of lastNodes) {
-          apply(lastNode, styles);
-        }
+      for (const lastNode of lastNodes) {
+        apply(lastNode, styles);
       }
     });
   };

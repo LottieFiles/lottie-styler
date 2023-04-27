@@ -8,6 +8,7 @@ import style from '../dist';
 
 import bounce from './__fixtures__/bounce.json';
 import check from './__fixtures__/check.json';
+import solid from './__fixtures__/solid.json';
 
 test('styling fill shape', async () => {
   const vfile = await relottie()
@@ -34,6 +35,20 @@ test('styling stroke shape', async () => {
   `,
     })
     .process(JSON.stringify(check));
+
+  expect(vfile.value).toMatchSnapshot();
+});
+
+test('styling solid layer', async () => {
+  const vfile = await relottie()
+    .use(style, {
+      lss: `
+      .solid {
+        solid-color: red;
+      }
+  `,
+    })
+    .process(JSON.stringify(solid));
 
   expect(vfile.value).toMatchSnapshot();
 });
