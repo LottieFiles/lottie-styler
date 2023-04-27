@@ -24,7 +24,6 @@
   },
   "dependencies": {
     "@lottiefiles/lottie-style-sheets": "workspace:*",
-    "@lottiefiles/relottie": "0.22.0",
     "colord": "2.9.3",
     "lodash.merge": "4.6.2",
     "names": "link:colord/plugins/names",
@@ -38,8 +37,7 @@
     "@lottiefiles/jest-config": "1.0.0",
     "@lottiefiles/last": "0.12.1",
     "@lottiefiles/lottie-types": "1.0.1",
-    "@lottiefiles/relottie-parse": "0.24.1",
-    "@lottiefiles/relottie-stringify": "0.24.1",
+    "@lottiefiles/relottie": "0.22.0",
     "@types/jest": "28.1.5",
     "@types/node": "18.0.4",
     "@types/unist": "2.0.6",

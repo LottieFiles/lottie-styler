@@ -85,6 +85,7 @@ type RGBAColor = [number, number, number, number];
 interface NormalizedStyles {
   'fill-color'?: RGBAColor;
   'stroke-color'?: RGBAColor;
+  'stroke-width'?: number;
 }
 
 const isColorProperty = (prop: string): boolean => {
@@ -112,6 +113,8 @@ const normalizeStyles = (declarations: Declaration[]): NormalizedStyles => {
         default:
           break;
       }
+    } else if (declaration.property === 'stroke-width') {
+      styles['stroke-width'] = Number(declaration.value);
     }
   }
 
@@ -141,6 +144,25 @@ const apply = (root: ObjectNode, styles: NormalizedStyles): void => {
           visit(root, 'primitive', (node, index, parent) => {
             if (parent?.title === 'static-value-children' && typeof index === 'number') {
               node.value = rgba[index] as number;
+            }
+          });
+        }
+        break;
+
+      case 'stroke-width':
+        if (root.title === 'shape-stroke') {
+          visit(root, 'element', (node) => {
+            if (node.title === 'stroke-width') {
+              visit(node, 'attribute', (attr, _, parent) => {
+                if (
+                  attr.title === 'static-value' &&
+                  attr.children[0]?.value &&
+                  attr.children[0].valueType === 'number' &&
+                  parent?.title === 'animated-value-static'
+                ) {
+                  attr.children[0].value = styles[prop] as number;
+                }
+              });
             }
           });
         }

@@ -2,23 +2,38 @@
  * Copyright 2023 Design Barn Inc.
  */
 
-import parse from '@lottiefiles/relottie-parse';
-import stringify from '@lottiefiles/relottie-stringify';
-import { unified } from 'unified';
+import { relottie } from '@lottiefiles/relottie';
 
 import style from '../dist';
 
 import bounce from './__fixtures__/bounce.json';
-import styles from './__fixtures__/styles.lss';
+import check from './__fixtures__/check.json';
 
-test('style', async () => {
-  const vfile = await unified()
-    .use(parse)
+test('styling fill shape', async () => {
+  const vfile = await relottie()
     .use(style, {
-      lss: styles,
+      lss: `
+      .background {
+        fill-color: blue;
+      }
+    `,
     })
-    .use(stringify)
     .process(JSON.stringify(bounce));
+
+  expect(vfile.value).toMatchSnapshot();
+});
+
+test('styling stroke shape', async () => {
+  const vfile = await relottie()
+    .use(style, {
+      lss: `
+      .stroke1 {
+        stroke-color: red;
+        stroke-width: 50;
+      }
+  `,
+    })
+    .process(JSON.stringify(check));
 
   expect(vfile.value).toMatchSnapshot();
 });
