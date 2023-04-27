@@ -17,6 +17,7 @@ test('styling fill shape', async () => {
       .background {
         fill-color: blue;
         fill-rule: 2;
+        opacity: 0.5;
       }
     `,
     })
@@ -32,6 +33,7 @@ test('styling stroke shape', async () => {
       .stroke1 {
         stroke-color: red;
         stroke-width: 50;
+        opacity: 0.5;
       }
   `,
     })

@@ -84,6 +84,7 @@ type RGBAColor = [number, number, number, number];
 interface NormalizedStyles {
   'fill-color'?: RGBAColor;
   'fill-rule'?: number;
+  opacity?: number;
   'solid-color'?: string;
   'stroke-color'?: RGBAColor;
   'stroke-width'?: number;
@@ -95,6 +96,14 @@ const isColorProperty = (prop: string): boolean => {
 
 const isValidFillRule = (value: string): boolean => {
   return value === '1' || value === '2';
+};
+
+const normalizeOpacity = (value: string): number => {
+  if (value.endsWith('%')) {
+    return parseFloat(value);
+  }
+
+  return parseFloat(value) * 100;
 };
 
 const normalizeStyles = (declarations: Declaration[]): NormalizedStyles => {
@@ -126,6 +135,20 @@ const normalizeStyles = (declarations: Declaration[]): NormalizedStyles => {
       styles['stroke-width'] = Number(declaration.value);
     } else if (declaration.property === 'fill-rule' && isValidFillRule(declaration.value)) {
       styles['fill-rule'] = Number(declaration.value);
+    } else if (declaration.property === 'opacity') {
+      const opacity = normalizeOpacity(declaration.value);
+
+      if (Number.isNaN(opacity)) {
+        continue;
+      }
+
+      if (opacity < 0) {
+        styles['opacity'] = 0;
+      } else if (opacity > 100) {
+        styles['opacity'] = 100;
+      } else {
+        styles['opacity'] = opacity;
+      }
     }
   }
 
@@ -194,6 +217,25 @@ const apply = (root: ObjectNode, styles: NormalizedStyles): void => {
           visit(root, 'attribute', (attr) => {
             if (attr.title === 'fill-rule' && attr.children[0]?.value) {
               attr.children[0].value = styles[prop] as number;
+            }
+          });
+        }
+        break;
+
+      case 'opacity':
+        if (['shape-stroke', 'shape-fill'].includes(root.title)) {
+          visit(root, 'element', (node) => {
+            if (['stroke-opacity', 'opacity'].includes(node.title)) {
+              visit(node, 'attribute', (attr, _, parent) => {
+                if (
+                  attr.title === 'static-value' &&
+                  attr.children[0]?.value &&
+                  attr.children[0].valueType === 'number' &&
+                  parent?.title === 'animated-value-static'
+                ) {
+                  attr.children[0].value = styles[prop] as number;
+                }
+              });
             }
           });
         }
