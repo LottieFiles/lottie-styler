@@ -83,7 +83,7 @@ type RGBAColor = [number, number, number, number];
 
 interface NormalizedStyles {
   'fill-color'?: RGBAColor;
-  'fill-rule'?: number;
+  'fill-rule'?: 1 | 2;
   opacity?: number;
   'solid-color'?: string;
   'stroke-color'?: RGBAColor;
@@ -95,7 +95,7 @@ const isColorProperty = (prop: string): boolean => {
 };
 
 const isValidFillRule = (value: string): boolean => {
-  return value === '1' || value === '2';
+  return value === 'nonzero' || value === 'evenodd';
 };
 
 const normalizeOpacity = (value: string): number => {
@@ -104,6 +104,14 @@ const normalizeOpacity = (value: string): number => {
   }
 
   return parseFloat(value) * 100;
+};
+
+const normalizeFillRule = (value: string): 1 | 2 => {
+  if (value === 'nonzero') {
+    return 1;
+  }
+
+  return 2;
 };
 
 const normalizeStyles = (declarations: Declaration[]): NormalizedStyles => {
@@ -134,7 +142,7 @@ const normalizeStyles = (declarations: Declaration[]): NormalizedStyles => {
     } else if (declaration.property === 'stroke-width') {
       styles['stroke-width'] = Number(declaration.value);
     } else if (declaration.property === 'fill-rule' && isValidFillRule(declaration.value)) {
-      styles['fill-rule'] = Number(declaration.value);
+      styles['fill-rule'] = normalizeFillRule(declaration.value);
     } else if (declaration.property === 'opacity') {
       const opacity = normalizeOpacity(declaration.value);
 
