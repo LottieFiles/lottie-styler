@@ -47,10 +47,32 @@ const useStyler = (lss: string, lottie?: string): string | undefined => {
   return styledLottie;
 };
 
+const initialLssCode = `
+/* Lottie Style Sheets (.LSS) */
+
+#cloud{
+ fill-color: red;
+ opacity: 90%
+}
+
+.cloud-borders{ 
+ stroke-color: black;
+ stroke-width: 4;
+ opacity: 0.3;
+}
+
+.sea{
+ fill-color: #F3F666;
+}
+
+#solid-cloud{
+ solid-color: rgba(255, 2, 243, 0.5);
+}
+
+`;
+
 const App: React.FC = () => {
-  const [lss, setLss] = useState(
-    `/* Lottie Style Sheets (.LSS) */\n\n#cloud{\n fill-color: red;\n}\n\n.cloud-borders{ \n stroke-color: black;\n}\n\n.sea{\n fill-color: #F3F666;\n}`,
-  );
+  const [lss, setLss] = useState(initialLssCode);
 
   const lottie = useLottie();
   const styledLottie = useStyler(lss, lottie);

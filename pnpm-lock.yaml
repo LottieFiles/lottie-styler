@@ -170,8 +170,6 @@ importers:
       '@lottiefiles/lottie-style-sheets': workspace:*
       '@lottiefiles/lottie-types': 1.0.1
       '@lottiefiles/relottie': 0.22.0
-      '@lottiefiles/relottie-parse': 0.24.1
-      '@lottiefiles/relottie-stringify': 0.24.1
       '@types/jest': 28.1.5
       '@types/node': 18.0.4
       '@types/unist': 2.0.6
@@ -190,7 +188,6 @@ importers:
       vfile: 5.3.7
     dependencies:
       '@lottiefiles/lottie-style-sheets': link:../lottie-style-sheets
-      '@lottiefiles/relottie': 0.22.0
       colord: 2.9.3
       lodash.merge: 4.6.2
       names: link:colord/plugins/names
@@ -203,8 +200,7 @@ importers:
       '@lottiefiles/jest-config': 1.0.0_ct3tknlkgarksmbytljtlqoqve
       '@lottiefiles/last': 0.12.1
       '@lottiefiles/lottie-types': 1.0.1
-      '@lottiefiles/relottie-parse': 0.24.1
-      '@lottiefiles/relottie-stringify': 0.24.1
+      '@lottiefiles/relottie': 0.22.0
       '@types/jest': 28.1.5
       '@types/node': 18.0.4
       '@types/unist': 2.0.6
@@ -1955,19 +1951,6 @@ packages:
       uzip: 0.20201110.0
     transitivePeerDependencies:
       - encoding
-    dev: false
-
-  /@lottiefiles/dotlottie-js/1.4.4:
-    resolution: {integrity: sha512-CVzeKmFo0XPSOd3NM88DFIpw4ajqoJccKoGGOvAHadJw6unbt8YOUXQgb8DqPLjcVAOFUvyvCSwzaJGt2+Jklg==, tarball: download/@LottieFiles/dotlottie-js/1.4.4/ea0ecab27d1327cd075e8e875e31d1cca8784317}
-    engines: {node: '>=12.0.0'}
-    dependencies:
-      buffer: 6.0.3
-      cross-fetch: 3.1.5
-      text-decoding: 1.0.0
-      uzip: 0.20201110.0
-    transitivePeerDependencies:
-      - encoding
-    dev: true
 
   /@lottiefiles/eslint-plugin/3.0.0_vtmenmswgwpltjeu3qrvnnamzu:
     resolution: {integrity: sha512-NifgSAG/ccHfxWEKh4EKwRmVUq7fYWkL+bZdFDktopp/CLYugW/02cAfZa+Su6u+3uzlcKKgl3J7LQd+dRXO/w==, tarball: download/@LottieFiles/eslint-plugin/3.0.0/648e4d9b17378d22d876fa054ff6e3eeb7639403}
@@ -2060,14 +2043,6 @@ packages:
     engines: {node: '>=18'}
     dependencies:
       unist-builder: 3.0.0
-    dev: false
-
-  /@lottiefiles/last-builder/0.24.0:
-    resolution: {integrity: sha512-jX4ipgYD34l5vVrMiqPy5b0VRQoNiaHTSdP7GEdbg4d2mUaOzyrsO9gVMtYQ1DWGHZCq8mvOGkXFP3Af7ZLnEw==, tarball: download/@lottiefiles/last-builder/0.24.0/f7d34bf6e879d85b77ec4988ce5ee729cd01af68}
-    engines: {node: '>=18'}
-    dependencies:
-      unist-builder: 3.0.0
-    dev: true
 
   /@lottiefiles/last/0.12.1:
     resolution: {integrity: sha512-nS+Nj+yuSbDRI9zJq8fu2vj8VPjNiT4FmwcZykn6PRPFdRzfEYQmURKEouCILt6OXRUT3l8lKjYatQ4v0+2Ubg==, tarball: download/@lottiefiles/last/0.12.1/5e6c4c175084ddabc3f7384d713cb205fd053ce4}
@@ -2108,18 +2083,6 @@ packages:
       lodash.merge: 4.6.2
       unist-util-is: 5.1.1
       vfile: 5.3.4
-    dev: false
-
-  /@lottiefiles/relottie-parse/0.24.1:
-    resolution: {integrity: sha512-XIbteQG6HWmnu5fdXnIxX++A/ZMMsKWmFmJwlmrQLYiOTSI31kejH2oe+Wyxi0FUyARgUsZhGpQAtLzcXyCDwQ==, tarball: download/@lottiefiles/relottie-parse/0.24.1/63cec54b69931a06724db500a40ba759bfd622df}
-    engines: {node: '>=18'}
-    dependencies:
-      '@humanwhocodes/momoa': 2.0.3
-      '@lottiefiles/last-builder': 0.24.0
-      lodash.merge: 4.6.2
-      unist-util-is: 5.1.1
-      vfile: 5.3.4
-    dev: true
 
   /@lottiefiles/relottie-stringify/0.22.0:
     resolution: {integrity: sha512-uXyjwzDrjn4gZRG4z5IBen+Is1YJv0p94L+SLVsTtN/eW+miJtYS7gJ7fB8UnOqw5oARRv9OLzdwIz9ERNvIoA==, tarball: download/@lottiefiles/relottie-stringify/0.22.0/32abc39c517e913f9968d593874edae83fca2ab0}
@@ -2129,17 +2092,6 @@ packages:
       lodash.merge: 4.6.2
     transitivePeerDependencies:
       - encoding
-    dev: false
-
-  /@lottiefiles/relottie-stringify/0.24.1:
-    resolution: {integrity: sha512-QoDBZv06TtSo7Wk1OhVXFErV2pPPpgWtQLcW1nRC+WGI9Ozp+2AvzsH4jXDe6Upw7bs3GTHPcXME38T8Q1zIhA==, tarball: download/@lottiefiles/relottie-stringify/0.24.1/8e214e24927741715022734cdc47c6b2687e09ab}
-    engines: {node: '>=18'}
-    dependencies:
-      '@lottiefiles/dotlottie-js': 1.4.4
-      lodash.merge: 4.6.2
-    transitivePeerDependencies:
-      - encoding
-    dev: true
 
   /@lottiefiles/relottie/0.22.0:
     resolution: {integrity: sha512-niIQ8TRhDrRaNcrJEmHP/gycoqrwJ92nVZ+XVxmqmk2EQFabbVZwrmBAlX1ePIh3Jep/EvGuVI+UACdef/rzWA==, tarball: download/@lottiefiles/relottie/0.22.0/97aaaa8e7557c4d8e0f3dcfd882e12adfcc2de35}
@@ -2151,7 +2103,6 @@ packages:
       unified: 10.1.2
     transitivePeerDependencies:
       - encoding
-    dev: false
 
   /@lottiefiles/remark-preset/1.0.0:
     resolution: {integrity: sha512-QmwWxHaCEAYKquck/yK9sjY1zgKt2iIBl7TAjY0HIArVSAQA9gmwo9/c4oaM64gwO3ihRsFarwMzoynCzBL1JA==, tarball: download/@LottieFiles/remark-preset/1.0.0/5217a245ca4b789133b5aa2441712f77e9493acc}

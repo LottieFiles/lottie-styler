@@ -4,11 +4,10 @@
 
 import type { ObjectNode, Root } from '@lottiefiles/last';
 import { parse as parseLss } from '@lottiefiles/lottie-style-sheets';
-import type { Rule, Declaration } from '@lottiefiles/lottie-style-sheets';
+import type { Declaration } from '@lottiefiles/lottie-style-sheets';
 import { colord, extend } from 'colord';
 import namesPlugin from 'colord/plugins/names';
 import type { Transformer, Plugin } from 'unified';
-import { is } from 'unist-util-is';
 import { visit } from 'unist-util-visit';
 
 extend([namesPlugin]);
@@ -17,7 +16,7 @@ export interface Options {
   lss: string;
 }
 
-const canStyleShapeTitles = ['shape-fill', 'shape-stroke'];
+const canStyleShapeTitles = ['shape-fill', 'shape-stroke', 'layer-solid-color'];
 
 const hasClassName = (root: ObjectNode, className: string): boolean => {
   return root.children.some(
@@ -84,11 +83,27 @@ type RGBAColor = [number, number, number, number];
 
 interface NormalizedStyles {
   'fill-color'?: RGBAColor;
+  'fill-rule'?: number;
+  opacity?: number;
+  'solid-color'?: string;
   'stroke-color'?: RGBAColor;
+  'stroke-width'?: number;
 }
 
 const isColorProperty = (prop: string): boolean => {
   return prop.includes('-color');
+};
+
+const isValidFillRule = (value: string): boolean => {
+  return value === '1' || value === '2';
+};
+
+const normalizeOpacity = (value: string): number => {
+  if (value.endsWith('%')) {
+    return parseFloat(value);
+  }
+
+  return parseFloat(value) * 100;
 };
 
 const normalizeStyles = (declarations: Declaration[]): NormalizedStyles => {
@@ -109,8 +124,30 @@ const normalizeStyles = (declarations: Declaration[]): NormalizedStyles => {
           styles['stroke-color'] = value;
           break;
 
+        case 'solid-color':
+          styles['solid-color'] = colord(declaration.value).toHex();
+          break;
+
         default:
           break;
+      }
+    } else if (declaration.property === 'stroke-width') {
+      styles['stroke-width'] = Number(declaration.value);
+    } else if (declaration.property === 'fill-rule' && isValidFillRule(declaration.value)) {
+      styles['fill-rule'] = Number(declaration.value);
+    } else if (declaration.property === 'opacity') {
+      const opacity = normalizeOpacity(declaration.value);
+
+      if (Number.isNaN(opacity)) {
+        continue;
+      }
+
+      if (opacity < 0) {
+        styles['opacity'] = 0;
+      } else if (opacity > 100) {
+        styles['opacity'] = 100;
+      } else {
+        styles['opacity'] = opacity;
       }
     }
   }
@@ -146,6 +183,64 @@ const apply = (root: ObjectNode, styles: NormalizedStyles): void => {
         }
         break;
 
+      case 'stroke-width':
+        if (root.title === 'shape-stroke') {
+          visit(root, 'element', (node) => {
+            if (node.title === 'stroke-width') {
+              visit(node, 'attribute', (attr, _, parent) => {
+                if (
+                  attr.title === 'static-value' &&
+                  attr.children[0]?.value &&
+                  attr.children[0].valueType === 'number' &&
+                  parent?.title === 'animated-value-static'
+                ) {
+                  attr.children[0].value = styles[prop] as number;
+                }
+              });
+            }
+          });
+        }
+        break;
+
+      case 'solid-color':
+        if (root.title === 'layer-solid-color') {
+          visit(root, 'attribute', (attr) => {
+            if (attr.title === 'hex-color' && attr.children[0]?.value) {
+              attr.children[0].value = styles[prop] as string;
+            }
+          });
+        }
+        break;
+
+      case 'fill-rule':
+        if (root.title === 'shape-fill') {
+          visit(root, 'attribute', (attr) => {
+            if (attr.title === 'fill-rule' && attr.children[0]?.value) {
+              attr.children[0].value = styles[prop] as number;
+            }
+          });
+        }
+        break;
+
+      case 'opacity':
+        if (['shape-stroke', 'shape-fill'].includes(root.title)) {
+          visit(root, 'element', (node) => {
+            if (['stroke-opacity', 'opacity'].includes(node.title)) {
+              visit(node, 'attribute', (attr, _, parent) => {
+                if (
+                  attr.title === 'static-value' &&
+                  attr.children[0]?.value &&
+                  attr.children[0].valueType === 'number' &&
+                  parent?.title === 'animated-value-static'
+                ) {
+                  attr.children[0].value = styles[prop] as number;
+                }
+              });
+            }
+          });
+        }
+        break;
+
       default:
         break;
     }
@@ -156,14 +251,12 @@ const relottieStyle: Plugin<[Options?], Root, Root> = (options: Options = { lss:
   const transformer: Transformer<Root> = async (last: Root): Promise<void> => {
     const lssast = parseLss(options.lss);
 
-    visit(lssast, (node) => {
-      if (is<Rule>(node, 'rule')) {
-        const lastNodes = querySelectorAll(last, node.selectors);
-        const styles = normalizeStyles(node.children);
+    visit(lssast, 'rule', (node) => {
+      const lastNodes = querySelectorAll(last, node.selectors);
+      const styles = normalizeStyles(node.children);
 
-        for (const lastNode of lastNodes) {
-          apply(lastNode, styles);
-        }
+      for (const lastNode of lastNodes) {
+        apply(lastNode, styles);
       }
     });
   };
