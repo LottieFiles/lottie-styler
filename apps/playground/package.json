@@ -10,8 +10,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@lottiefiles/lottie-styler": "workspace:*",
     "@lottiefiles/react-lottie-player": "3.5.3",
-    "@lottiefiles/relottie-styler": "workspace:*",
     "@uiw/react-textarea-code-editor": "2.1.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",

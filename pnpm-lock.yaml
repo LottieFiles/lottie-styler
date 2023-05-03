@@ -50,8 +50,8 @@ importers:
 
   apps/playground:
     specifiers:
+      '@lottiefiles/lottie-styler': workspace:*
       '@lottiefiles/react-lottie-player': 3.5.3
-      '@lottiefiles/relottie-styler': workspace:*
       '@types/react': ^18.0.28
       '@types/react-dom': ^18.0.11
       '@typescript-eslint/eslint-plugin': ^5.57.1
@@ -65,8 +65,8 @@ importers:
       unified: 10.1.2
       vite: ^4.3.2
     dependencies:
+      '@lottiefiles/lottie-styler': link:../../packages/lottie-styler
       '@lottiefiles/react-lottie-player': 3.5.3_react@18.2.0
-      '@lottiefiles/relottie-styler': link:../../packages/lottie-styler
       '@uiw/react-textarea-code-editor': 2.1.1_biqbaboplfbrettd7655fr4n2y
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
