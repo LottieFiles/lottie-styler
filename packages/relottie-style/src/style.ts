@@ -16,7 +16,13 @@ export interface Options {
   lss: string;
 }
 
-const canStyleShapeTitles = ['shape-fill', 'shape-stroke', 'layer-solid-color'];
+const canStyleShapeTitles = [
+  'shape-fill',
+  'shape-stroke',
+  'layer-solid-color',
+  'shape-gradient-fill',
+  'shape-gradient-stroke',
+];
 
 const hasClassName = (root: ObjectNode, className: string): boolean => {
   return root.children.some(
@@ -40,6 +46,30 @@ const getShapesByClassName = (root: Root, className: string): ObjectNode[] => {
   visit(root, 'object', (node) => {
     if (canStyleShapeTitles.includes(node.title) && hasClassName(node, className)) {
       result.push(node);
+    }
+  });
+
+  return result;
+};
+
+const getElementsByName = (root: Root, name: string): ObjectNode[] => {
+  const result: ObjectNode[] = [];
+
+  const elementNameMap: Record<string, string> = {
+    'layer-solid-color': 'SolidColorLayer',
+    'shape-fill': 'FillShape',
+    'shape-stroke': 'StrokeShape',
+    'shape-gradient-fill': 'GradientFillShape',
+    'shape-gradient-stroke': 'GradientStrokeShape',
+  };
+
+  visit(root, 'object', (node) => {
+    if (node.title) {
+      const elementName = elementNameMap[node.title];
+
+      if (elementName === name) {
+        result.push(node);
+      }
     }
   });
 
@@ -73,6 +103,10 @@ const querySelectorAll = (root: Root, selectors: string[]): ObjectNode[] => {
       const shapes = getShapesByClassName(root, selectorValue);
 
       shapes.forEach((shape) => result.add(shape));
+    } else {
+      const elements = getElementsByName(root, selector);
+
+      elements.forEach((element) => result.add(element));
     }
   }
 
@@ -84,6 +118,7 @@ type RGBAColor = [number, number, number, number];
 interface NormalizedStyles {
   'fill-color'?: RGBAColor;
   'fill-rule'?: 1 | 2;
+  hidden?: boolean;
   opacity?: number;
   'solid-color'?: string;
   'stroke-color'?: RGBAColor;
@@ -157,6 +192,8 @@ const normalizeStyles = (declarations: Declaration[]): NormalizedStyles => {
       } else {
         styles['opacity'] = opacity;
       }
+    } else if (declaration.property === 'visibility') {
+      styles['hidden'] = declaration.value === 'hidden';
     }
   }
 
@@ -169,30 +206,34 @@ const apply = (root: ObjectNode, styles: NormalizedStyles): void => {
     switch (prop) {
       case 'fill-color':
         if (root.title === 'shape-fill') {
-          const rgba = styles[prop] as RGBAColor;
+          const rgba = styles[prop];
 
-          visit(root, 'primitive', (node, index, parent) => {
-            if (parent?.title === 'color-rgba-children' && typeof index === 'number') {
-              node.value = rgba[index] as number;
-            }
-          });
+          if (Array.isArray(rgba)) {
+            visit(root, 'primitive', (node, index, parent) => {
+              if (parent?.title === 'color-rgba-children' && typeof index === 'number') {
+                node.value = rgba[index] as number;
+              }
+            });
+          }
         }
         break;
 
       case 'stroke-color':
         if (root.title === 'shape-stroke') {
-          const rgba = styles[prop] as RGBAColor;
+          const rgba = styles[prop];
 
-          visit(root, 'primitive', (node, index, parent) => {
-            if (parent?.title === 'static-value-children' && typeof index === 'number') {
-              node.value = rgba[index] as number;
-            }
-          });
+          if (Array.isArray(rgba)) {
+            visit(root, 'primitive', (node, index, parent) => {
+              if (parent?.title === 'static-value-children' && typeof index === 'number') {
+                node.value = rgba[index] as number;
+              }
+            });
+          }
         }
         break;
 
       case 'stroke-width':
-        if (root.title === 'shape-stroke') {
+        if (root.title === 'shape-stroke' || root.title === 'shape-gradient-stroke') {
           visit(root, 'element', (node) => {
             if (node.title === 'stroke-width') {
               visit(node, 'attribute', (attr, _, parent) => {
@@ -221,7 +262,7 @@ const apply = (root: ObjectNode, styles: NormalizedStyles): void => {
         break;
 
       case 'fill-rule':
-        if (root.title === 'shape-fill') {
+        if (root.title === 'shape-fill' || root.title === 'shape-gradient-fill') {
           visit(root, 'attribute', (attr) => {
             if (attr.title === 'fill-rule' && attr.children[0]?.value) {
               attr.children[0].value = styles[prop] as number;
@@ -231,7 +272,7 @@ const apply = (root: ObjectNode, styles: NormalizedStyles): void => {
         break;
 
       case 'opacity':
-        if (['shape-stroke', 'shape-fill'].includes(root.title)) {
+        if (['shape-stroke', 'shape-fill', 'shape-gradient-fill', 'shape-gradient-stroke'].includes(root.title)) {
           visit(root, 'element', (node) => {
             if (['stroke-opacity', 'opacity'].includes(node.title)) {
               visit(node, 'attribute', (attr, _, parent) => {
@@ -247,6 +288,17 @@ const apply = (root: ObjectNode, styles: NormalizedStyles): void => {
             }
           });
         }
+        break;
+
+      case 'hidden':
+        if (root.title.includes('shape') || root.title.includes('layer')) {
+          visit(root, 'attribute', (attr) => {
+            if (attr.title === 'hidden' && attr.children[0]) {
+              attr.children[0].value = styles[prop] as boolean;
+            }
+          });
+        }
+
         break;
 
       default:

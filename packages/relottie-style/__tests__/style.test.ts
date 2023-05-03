@@ -55,3 +55,37 @@ test('styling solid layer', async () => {
 
   expect(vfile.value).toMatchSnapshot();
 });
+
+test('element selector', async () => {
+  const vfile = await relottie()
+    .use(style, {
+      lss: `
+      SolidColorLayer {
+        solid-color: blue;
+      }
+
+      GradientFillShape {
+        visibility: hidden;
+      }
+
+      GradientStrokeShape {
+        visibility: hidden;
+      }
+
+      StrokeShape {
+        stroke-color: blue;
+        stroke-width: 50;
+        opacity: 0.5;
+      }
+
+      FillShape {
+        fill-color: green;
+        fill-rule: evenodd;
+        opacity: 0.5;
+      }
+    `,
+    })
+    .process(JSON.stringify(solid));
+
+  expect(vfile.value).toMatchSnapshot();
+});
