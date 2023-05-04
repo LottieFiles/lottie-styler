@@ -3,8 +3,8 @@
  */
 
 import '@uiw/react-textarea-code-editor/dist.css';
+import { createStyler } from '@lottiefiles/lottie-styler';
 import { Player, Controls } from '@lottiefiles/react-lottie-player';
-import { createStyler } from '@lottiefiles/relottie-styler';
 import CodeEditor from '@uiw/react-textarea-code-editor';
 import React, { useEffect, useState } from 'react';
 import { useAsyncFn, useSearchParam } from 'react-use';
