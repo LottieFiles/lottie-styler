@@ -56,7 +56,7 @@ jobs:
   release:
     needs: validate
     runs-on: ubuntu-latest
-    if: ${{ github.repository == 'dotlottie/dotlottie-js' && github.event_name == 'push' }}
+    if: ${{ github.repository == 'LottieFiles/lottie-styler' && github.event_name == 'push' }}
     steps:
       - name: ⬇️ Checkout repo
         uses: actions/checkout@v2
