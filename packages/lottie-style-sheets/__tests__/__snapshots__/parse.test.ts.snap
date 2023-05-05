@@ -1,0 +1,64 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`parse 1`] = `
+Object {
+  "children": Array [
+    Object {
+      "children": Array [
+        Object {
+          "important": undefined,
+          "property": "fill-color",
+          "type": "declaration",
+          "value": "red",
+        },
+        Object {
+          "important": undefined,
+          "property": "opacity",
+          "type": "declaration",
+          "value": "0.2",
+        },
+      ],
+      "selector": "#id1, #id2, #id3",
+      "selectors": Array [
+        "#id1",
+        "#id2",
+        "#id3",
+      ],
+      "type": "rule",
+    },
+    Object {
+      "children": Array [
+        Object {
+          "important": undefined,
+          "property": "stoke-color",
+          "type": "declaration",
+          "value": "#fff",
+        },
+      ],
+      "selector": ".class1, .class2, .class3",
+      "selectors": Array [
+        ".class1",
+        ".class2",
+        ".class3",
+      ],
+      "type": "rule",
+    },
+    Object {
+      "children": Array [
+        Object {
+          "important": undefined,
+          "property": "fill-rule",
+          "type": "declaration",
+          "value": "solid",
+        },
+      ],
+      "selector": ".class",
+      "selectors": Array [
+        ".class",
+      ],
+      "type": "rule",
+    },
+  ],
+  "type": "root",
+}
+`;

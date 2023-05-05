@@ -1,0 +1,30 @@
+{
+  "name": "playground",
+  "version": "0.0.0",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "build": "tsc && vite build",
+    "dev": "vite",
+    "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@lottiefiles/lottie-styler": "workspace:*",
+    "@lottiefiles/react-lottie-player": "3.5.3",
+    "@uiw/react-textarea-code-editor": "2.1.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-use": "17.4.0",
+    "unified": "10.1.2"
+  },
+  "devDependencies": {
+    "@types/react": "^18.0.28",
+    "@types/react-dom": "^18.0.11",
+    "@typescript-eslint/eslint-plugin": "^5.57.1",
+    "@typescript-eslint/parser": "^5.57.1",
+    "@vitejs/plugin-react": "^4.0.0",
+    "typescript": "^5.0.2",
+    "vite": "^4.3.2"
+  }
+}
