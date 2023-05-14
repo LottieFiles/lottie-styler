@@ -2,6 +2,8 @@
  * Copyright 2023 Design Barn Inc.
  */
 
+/* eslint-disable padding-line-between-statements */
+
 import type { ObjectNode, Root } from '@lottiefiles/last';
 import { parse as parseLss } from '@lottiefiles/lottie-style-sheets';
 import type { Declaration } from '@lottiefiles/lottie-style-sheets';
@@ -9,6 +11,8 @@ import { colord, extend } from 'colord';
 import namesPlugin from 'colord/plugins/names';
 import type { Transformer, Plugin } from 'unified';
 import { visit } from 'unist-util-visit';
+
+import { applyGradient, isLinearGradient, isRadialGradient, normalizeGradient } from './gradient';
 
 extend([namesPlugin]);
 
@@ -119,7 +123,11 @@ interface NormalizedStyles {
   'fill-color'?: RGBAColor;
   'fill-rule'?: 1 | 2;
   hidden?: boolean;
+  'linear-gradient-fill-color'?: number[];
+  'linear-gradient-stroke-color'?: number[];
   opacity?: number;
+  'radial-gradient-fill-color'?: number[];
+  'radial-gradient-stroke-color'?: number[];
   'solid-color'?: string;
   'stroke-color'?: RGBAColor;
   'stroke-width'?: number;
@@ -169,6 +177,36 @@ const normalizeStyles = (declarations: Declaration[]): NormalizedStyles => {
 
         case 'solid-color':
           styles['solid-color'] = colord(declaration.value).toHex();
+          break;
+
+        default:
+          break;
+      }
+    } else if (isColorProperty(declaration.property) && isLinearGradient(declaration.value)) {
+      const value = normalizeGradient(declaration.value);
+
+      switch (declaration.property) {
+        case 'fill-color':
+          styles['linear-gradient-fill-color'] = value;
+          break;
+
+        case 'stroke-color':
+          styles['linear-gradient-stroke-color'] = value;
+          break;
+
+        default:
+          break;
+      }
+    } else if (isColorProperty(declaration.property) && isRadialGradient(declaration.value)) {
+      const value = normalizeGradient(declaration.value);
+
+      switch (declaration.property) {
+        case 'fill-color':
+          styles['radial-gradient-fill-color'] = value;
+          break;
+
+        case 'stroke-color':
+          styles['radial-gradient-stroke-color'] = value;
           break;
 
         default:
@@ -262,7 +300,7 @@ const apply = (root: ObjectNode, styles: NormalizedStyles): void => {
         break;
 
       case 'fill-rule':
-        if (root.title === 'shape-fill' || root.title === 'shape-gradient-fill') {
+        if (['shape-fill', 'shape-gradient-fill'].includes(root.title)) {
           visit(root, 'attribute', (attr) => {
             if (attr.title === 'fill-rule' && attr.children[0]?.value) {
               attr.children[0].value = styles[prop] as number;
@@ -299,6 +337,15 @@ const apply = (root: ObjectNode, styles: NormalizedStyles): void => {
           });
         }
 
+        break;
+
+      case 'linear-gradient-fill-color':
+      case 'linear-gradient-stroke-color':
+        applyGradient(root, styles[prop] as number[], 'linear');
+        break;
+      case 'radial-gradient-fill-color':
+      case 'radial-gradient-stroke-color':
+        applyGradient(root, styles[prop] as number[], 'radial');
         break;
 
       default:

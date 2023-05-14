@@ -25,8 +25,7 @@
   "dependencies": {
     "@lottiefiles/lottie-style-sheets": "workspace:*",
     "colord": "2.9.3",
-    "lodash.merge": "4.6.2",
-    "names": "link:colord/plugins/names",
+    "gradient-parser": "1.0.2",
     "unist-util-is": "5.2.1",
     "unist-util-visit": "4.1.2",
     "vfile": "5.3.7"
@@ -38,6 +37,7 @@
     "@lottiefiles/last": "0.12.1",
     "@lottiefiles/lottie-types": "1.0.1",
     "@lottiefiles/relottie": "0.22.0",
+    "@types/gradient-parser": "0.1.2",
     "@types/jest": "28.1.5",
     "@types/node": "18.0.4",
     "@types/unist": "2.0.6",
