@@ -9,6 +9,8 @@ import { parse as parseLss } from '@lottiefiles/lottie-style-sheets';
 import type { Declaration } from '@lottiefiles/lottie-style-sheets';
 import { colord, extend } from 'colord';
 import namesPlugin from 'colord/plugins/names';
+// eslint-disable-next-line import/no-namespace
+import * as parsel from 'parsel-js';
 import type { Transformer, Plugin } from 'unified';
 import { visit } from 'unist-util-visit';
 
@@ -20,101 +22,113 @@ export interface Options {
   lss: string;
 }
 
-const canStyleShapeTitles = [
-  'shape-fill',
-  'shape-stroke',
-  'layer-solid-color',
-  'shape-gradient-fill',
-  'shape-gradient-stroke',
-];
+type AttributeType = 'layer-xml-id' | 'css-class' | 'name' | 'layer-type' | 'shape-type';
+type AttributeValue = string | number;
 
-const hasClassName = (root: ObjectNode, className: string): boolean => {
-  return root.children.some(
-    (node) =>
-      node.type === 'attribute' &&
-      node.title === 'css-class' &&
-      typeof node.children[0]?.value === 'string' &&
-      node.children[0].value.includes(className),
-  );
-};
-
-const hasId = (root: ObjectNode, id: string): boolean => {
-  return root.children.some(
-    (node) => node.type === 'attribute' && node.title === 'layer-xml-id' && id === node.children[0]?.value,
-  );
-};
-
-const getShapesByClassName = (root: Root, className: string): ObjectNode[] => {
-  const result: ObjectNode[] = [];
-
-  visit(root, 'object', (node) => {
-    if (canStyleShapeTitles.includes(node.title) && hasClassName(node, className)) {
-      result.push(node);
-    }
-  });
-
-  return result;
-};
-
-const getElementsByName = (root: Root, name: string): ObjectNode[] => {
-  const result: ObjectNode[] = [];
-
-  const elementNameMap: Record<string, string> = {
-    'layer-solid-color': 'SolidColorLayer',
-    'shape-fill': 'FillShape',
-    'shape-stroke': 'StrokeShape',
-    'shape-gradient-fill': 'GradientFillShape',
-    'shape-gradient-stroke': 'GradientStrokeShape',
-  };
-
-  visit(root, 'object', (node) => {
-    if (node.title) {
-      const elementName = elementNameMap[node.title];
-
-      if (elementName === name) {
-        result.push(node);
-      }
-    }
-  });
-
-  return result;
-};
-
-const getShapesById = (root: Root, id: string): ObjectNode[] => {
-  const result: ObjectNode[] = [];
-
-  visit(root, 'object', (node) => {
-    if (canStyleShapeTitles.includes(node.title) && hasId(node, id)) {
-      result.push(node);
-    }
-  });
-
-  return result;
-};
-
-const querySelectorAll = (root: Root, selectors: string[]): ObjectNode[] => {
+const findNodesByAttribute = (
+  nodeOrList: Root | ObjectNode | ObjectNode[],
+  value: AttributeValue,
+  type: AttributeType,
+  isOwnAttribute: boolean = false,
+): ObjectNode[] => {
   const result = new Set<ObjectNode>();
 
-  for (const selector of selectors) {
-    const selectorType = selector[0];
-    const selectorValue = selector.slice(1);
+  const list = Array.isArray(nodeOrList) ? nodeOrList : [nodeOrList];
 
-    if (selectorType === '#') {
-      const shapes = getShapesById(root, selectorValue);
-
-      shapes.forEach((shape) => result.add(shape));
-    } else if (selectorType === '.') {
-      const shapes = getShapesByClassName(root, selectorValue);
-
-      shapes.forEach((shape) => result.add(shape));
-    } else {
-      const elements = getElementsByName(root, selector);
-
-      elements.forEach((element) => result.add(element));
-    }
+  for (const node of list) {
+    visit(node, 'attribute', (attr, _, parent) => {
+      if (attr.title === type && attr.children[0]?.value === value && parent && parent.type !== 'root') {
+        if (isOwnAttribute) {
+          if (parent === node) {
+            result.add(parent);
+          }
+        } else {
+          result.add(parent);
+        }
+      }
+    });
   }
 
   return Array.from(result);
+};
+
+const querySelectorAll = (root: Root, selectors: string[]): ObjectNode[] => {
+  const matchedNodes = [];
+
+  for (const selector of selectors) {
+    let result: ObjectNode[] = [];
+
+    const ast = parsel.parse(selector);
+
+    parsel.walk(ast, (node, parent) => {
+      const roots = result.length > 0 ? result : root;
+
+      if (node.type === 'id') {
+        const lastNodes = findNodesByAttribute(roots, node.name, 'layer-xml-id', parent?.type === 'compound');
+
+        result = lastNodes;
+      } else if (node.type === 'class') {
+        const lastNodes = findNodesByAttribute(roots, node.name, 'css-class', parent?.type === 'compound');
+
+        result = lastNodes;
+      } else if (node.type === 'type') {
+        let value: string | number = '';
+        let type: AttributeType | null = null;
+
+        if (node.name === 'FillShape') {
+          type = 'shape-type';
+          value = 'fl';
+        } else if (node.name === 'StrokeShape') {
+          type = 'shape-type';
+          value = 'st';
+        } else if (node.name === 'GradientFillShape') {
+          type = 'shape-type';
+          value = 'gf';
+        } else if (node.name === 'GradientStrokeShape') {
+          type = 'shape-type';
+          value = 'gs';
+        } else if (node.name === 'ShapeLayer') {
+          type = 'layer-type';
+          value = 4;
+        } else if (node.name === 'SolidColorLayer') {
+          type = 'layer-type';
+          value = 1;
+        }
+
+        if (type && value) {
+          const lastNodes = findNodesByAttribute(roots, value, type);
+
+          result = lastNodes;
+        }
+      } else if (node.type === 'attribute') {
+        let type: AttributeType | null = null;
+        let value: string | number | undefined = node.value;
+
+        if (node.name === 'id') {
+          type = 'layer-xml-id';
+        } else if (node.name === 'class') {
+          type = 'css-class';
+        } else if (node.name === 'name') {
+          type = 'name';
+        } else if (node.name === 'shape-type') {
+          type = 'shape-type';
+        } else if (node.name === 'layer-type') {
+          type = 'layer-type';
+          value = Number(node.value);
+        }
+
+        if (type && value && ['number', 'string'].includes(typeof value)) {
+          const lastNodes = findNodesByAttribute(roots, value, type, parent?.type === 'compound');
+
+          result = lastNodes;
+        }
+      }
+    });
+
+    matchedNodes.push(...result);
+  }
+
+  return Array.from(new Set(matchedNodes));
 };
 
 type RGBAColor = [number, number, number, number];
