@@ -70,6 +70,7 @@ test('element selector', async () => {
 
       GradientStrokeShape {
         visibility: hidden;
+        stroke-color: linear-gradient(red, green, blue);
       }
 
       StrokeShape {

@@ -35,9 +35,14 @@ const useStyler = (lss: string, lottie?: string): string | undefined => {
       const styler = createStyler(lottie);
 
       const style = async (lottieStyleSheets: string): Promise<void> => {
-        const file = await styler.style(lottieStyleSheets);
+        try {
+          const file = await styler.style(lottieStyleSheets);
 
-        setStyledLottie(file.toString());
+          setStyledLottie(file.toString());
+        } catch (err) {
+          console.error(err);
+          setStyledLottie(lottie);
+        }
       };
 
       style(lss);
@@ -67,6 +72,10 @@ const initialLssCode = `
 
 #solid-cloud{
  solid-color: rgba(255, 2, 243, 0.5);
+}
+
+GradientFillShape {
+  fill-color: radial-gradient(red 10%, blue 20%, green 40%, black 60%, yellow 70%, pink 100%);
 }
 
 `;
