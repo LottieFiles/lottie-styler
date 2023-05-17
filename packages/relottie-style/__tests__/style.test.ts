@@ -14,7 +14,7 @@ test('styling fill shape', async () => {
   const vfile = await relottie()
     .use(style, {
       lss: `
-      .background {
+      FillShape[class=background] {
         fill-color: blue;
         fill-rule: evenodd;
         opacity: 0.5;
@@ -30,7 +30,7 @@ test('styling stroke shape', async () => {
   const vfile = await relottie()
     .use(style, {
       lss: `
-      .stroke1 {
+      ShapeLayer StrokeShape.stroke1 {
         stroke-color: red;
         stroke-width: 50;
         opacity: 0.5;
@@ -46,7 +46,7 @@ test('styling solid layer', async () => {
   const vfile = await relottie()
     .use(style, {
       lss: `
-      .solid {
+      SolidColorLayer.solid {
         solid-color: red;
       }
   `,
@@ -83,6 +83,24 @@ test('element selector', async () => {
         fill-color: green;
         fill-rule: evenodd;
         opacity: 0.5;
+      }
+    `,
+    })
+    .process(JSON.stringify(solid));
+
+  expect(vfile.value).toMatchSnapshot();
+});
+
+test('attribute selector', async () => {
+  const vfile = await relottie()
+    .use(style, {
+      lss: `
+      [class=solid] {
+        solid-color: red;
+      }
+
+      [name=Sea Layer] FillShape {
+        fill-color: red;
       }
     `,
     })
