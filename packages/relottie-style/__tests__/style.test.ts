@@ -84,6 +84,10 @@ test('element selector', async () => {
         fill-rule: evenodd;
         opacity: 0.5;
       }
+
+      ImageLayer {
+        visibility: hidden;
+      }
     `,
     })
     .process(JSON.stringify(solid));
