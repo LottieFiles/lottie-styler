@@ -71,7 +71,7 @@ const initialLssCode = `
 }
 
 #solid-cloud{
- solid-color: rgba(255, 2, 243, 0.5);
+ fill-color: rgba(255, 2, 243, 0.5);
 }
 
 GradientFillShape {
