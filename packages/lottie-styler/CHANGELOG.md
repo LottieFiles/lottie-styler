@@ -1,5 +1,13 @@
 # @lottiefiles/lottie-styler
 
+## 0.3.0
+
+### Patch Changes
+
+- Updated dependencies [f3ab741]
+- Updated dependencies [7cd8353]
+  - @lottiefiles/relottie-style@0.3.0
+
 ## 0.2.0
 
 ### Patch Changes
