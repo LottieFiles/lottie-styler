@@ -1,5 +1,15 @@
 # @lottiefiles/relottie-style
 
+## 0.3.0
+
+### Minor Changes
+
+- f3ab741: feat: 🎸 ImageLayer element selector
+
+### Patch Changes
+
+- 7cd8353: fix: 🐛 phasing out solid-color prop for fill-color
+
 ## 0.2.0
 
 ### Minor Changes
