@@ -2,4 +2,4 @@
 "@lottiefiles/relottie-style": minor
 ---
 
-feat: 🎸 ImageLayer 'src' attribute
+feat: 🎸 ImageLayer 'src' property
