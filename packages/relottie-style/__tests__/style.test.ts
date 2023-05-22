@@ -112,3 +112,17 @@ test('attribute selector', async () => {
 
   expect(vfile.value).toMatchSnapshot();
 });
+
+test('styling image layer', async () => {
+  const vfile = await relottie()
+    .use(style, {
+      lss: `
+      ImageLayer {
+        src: url("https://placehold.co/600x400")
+      }
+    `,
+    })
+    .process(JSON.stringify(solid));
+
+  expect(vfile.value).toMatchSnapshot();
+});
