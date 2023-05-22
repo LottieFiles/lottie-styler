@@ -145,7 +145,6 @@ interface NormalizedStyles {
   opacity?: number;
   'radial-gradient-fill-color'?: number[];
   'radial-gradient-stroke-color'?: number[];
-  'solid-color'?: string;
   'stroke-color'?: RGBAColor;
   'stroke-width'?: number;
 }
@@ -190,10 +189,6 @@ const normalizeStyles = (declarations: Declaration[]): NormalizedStyles => {
 
         case 'stroke-color':
           styles['stroke-color'] = value;
-          break;
-
-        case 'solid-color':
-          styles['solid-color'] = colord(declaration.value).toHex();
           break;
 
         default:
@@ -260,16 +255,29 @@ const apply = (root: ObjectNode, styles: NormalizedStyles): void => {
   for (const prop in styles) {
     switch (prop) {
       case 'fill-color':
-        if (root.title === 'shape-fill') {
-          const rgba = styles[prop];
+        const rgbaArray = styles[prop];
 
-          if (Array.isArray(rgba)) {
+        if (root.title === 'shape-fill') {
+          if (Array.isArray(rgbaArray)) {
             visit(root, 'primitive', (node, index, parent) => {
               if (parent?.title === 'color-rgba-children' && typeof index === 'number') {
-                node.value = rgba[index] as number;
+                node.value = rgbaArray[index] as number;
               }
             });
           }
+        } else if (root.title === 'layer-solid-color') {
+          visit(root, 'attribute', (attr) => {
+            if (attr.title === 'hex-color' && attr.children[0]?.value && rgbaArray?.length === 4) {
+              const hex = colord({
+                r: rgbaArray[0] * 255,
+                g: rgbaArray[1] * 255,
+                b: rgbaArray[2] * 255,
+                a: rgbaArray[3],
+              }).toHex();
+
+              attr.children[0].value = hex;
+            }
+          });
         }
         break;
 
@@ -301,16 +309,6 @@ const apply = (root: ObjectNode, styles: NormalizedStyles): void => {
                   attr.children[0].value = styles[prop] as number;
                 }
               });
-            }
-          });
-        }
-        break;
-
-      case 'solid-color':
-        if (root.title === 'layer-solid-color') {
-          visit(root, 'attribute', (attr) => {
-            if (attr.title === 'hex-color' && attr.children[0]?.value) {
-              attr.children[0].value = styles[prop] as string;
             }
           });
         }

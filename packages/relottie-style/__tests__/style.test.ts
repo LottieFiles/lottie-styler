@@ -47,7 +47,7 @@ test('styling solid layer', async () => {
     .use(style, {
       lss: `
       SolidColorLayer.solid {
-        solid-color: red;
+        fill-color: red;
       }
   `,
     })
@@ -61,7 +61,7 @@ test('element selector', async () => {
     .use(style, {
       lss: `
       SolidColorLayer {
-        solid-color: blue;
+        fill-color: blue;
       }
 
       GradientFillShape {
@@ -100,7 +100,7 @@ test('attribute selector', async () => {
     .use(style, {
       lss: `
       [class=solid] {
-        solid-color: red;
+        fill-color: red;
       }
 
       [name=Sea Layer] FillShape {
