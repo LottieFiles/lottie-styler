@@ -11,6 +11,7 @@ import { colord, extend } from 'colord';
 import namesPlugin from 'colord/plugins/names';
 // eslint-disable-next-line import/no-namespace
 import * as parsel from 'parsel-js';
+import { parse as parseValue } from 'postcss-values-parser';
 import type { Transformer, Plugin } from 'unified';
 import { visit } from 'unist-util-visit';
 
@@ -145,6 +146,7 @@ interface NormalizedStyles {
   opacity?: number;
   'radial-gradient-fill-color'?: number[];
   'radial-gradient-stroke-color'?: number[];
+  src?: string;
   'stroke-color'?: RGBAColor;
   'stroke-width'?: number;
 }
@@ -171,6 +173,43 @@ const normalizeFillRule = (value: string): 1 | 2 => {
   }
 
   return 2;
+};
+
+const isValidUrl = (value: string): boolean => {
+  try {
+    // eslint-disable-next-line no-new
+    new URL(value);
+  } catch (_) {
+    return false;
+  }
+
+  return true;
+};
+
+const getSrcUrl = (value: string): string => {
+  const root = parseValue(value);
+
+  const nodes = root.nodes;
+
+  if (nodes.length === 1) {
+    const node = nodes[0];
+
+    if (node && node.type === 'func' && node.name === 'url') {
+      const nestedNodes = node.nodes;
+
+      if (nestedNodes.length === 1) {
+        const nestedNode = nestedNodes[0];
+
+        if (nestedNode && nestedNode.type === 'quoted') {
+          const content = nestedNode.contents;
+
+          return content;
+        }
+      }
+    }
+  }
+
+  return '';
 };
 
 const normalizeStyles = (declarations: Declaration[]): NormalizedStyles => {
@@ -244,29 +283,34 @@ const normalizeStyles = (declarations: Declaration[]): NormalizedStyles => {
       }
     } else if (declaration.property === 'visibility') {
       styles['hidden'] = declaration.value === 'hidden';
+    } else if (declaration.property === 'src') {
+      const url = getSrcUrl(declaration.value);
+      if (isValidUrl(url)) {
+        styles['src'] = url;
+      }
     }
   }
 
   return styles;
 };
 
-const apply = (root: ObjectNode, styles: NormalizedStyles): void => {
+const apply = (targetNode: ObjectNode, styles: NormalizedStyles, root: Root): void => {
   // eslint-disable-next-line guard-for-in
   for (const prop in styles) {
     switch (prop) {
       case 'fill-color':
         const rgbaArray = styles[prop];
 
-        if (root.title === 'shape-fill') {
+        if (targetNode.title === 'shape-fill') {
           if (Array.isArray(rgbaArray)) {
-            visit(root, 'primitive', (node, index, parent) => {
+            visit(targetNode, 'primitive', (node, index, parent) => {
               if (parent?.title === 'color-rgba-children' && typeof index === 'number') {
                 node.value = rgbaArray[index] as number;
               }
             });
           }
-        } else if (root.title === 'layer-solid-color') {
-          visit(root, 'attribute', (attr) => {
+        } else if (targetNode.title === 'layer-solid-color') {
+          visit(targetNode, 'attribute', (attr) => {
             if (attr.title === 'hex-color' && attr.children[0]?.value && rgbaArray?.length === 4) {
               const hex = colord({
                 r: rgbaArray[0] * 255,
@@ -282,11 +326,11 @@ const apply = (root: ObjectNode, styles: NormalizedStyles): void => {
         break;
 
       case 'stroke-color':
-        if (root.title === 'shape-stroke') {
+        if (targetNode.title === 'shape-stroke') {
           const rgba = styles[prop];
 
           if (Array.isArray(rgba)) {
-            visit(root, 'primitive', (node, index, parent) => {
+            visit(targetNode, 'primitive', (node, index, parent) => {
               if (parent?.title === 'static-value-children' && typeof index === 'number') {
                 node.value = rgba[index] as number;
               }
@@ -296,8 +340,8 @@ const apply = (root: ObjectNode, styles: NormalizedStyles): void => {
         break;
 
       case 'stroke-width':
-        if (root.title === 'shape-stroke' || root.title === 'shape-gradient-stroke') {
-          visit(root, 'element', (node) => {
+        if (targetNode.title === 'shape-stroke' || targetNode.title === 'shape-gradient-stroke') {
+          visit(targetNode, 'element', (node) => {
             if (node.title === 'stroke-width') {
               visit(node, 'attribute', (attr, _, parent) => {
                 if (
@@ -315,8 +359,8 @@ const apply = (root: ObjectNode, styles: NormalizedStyles): void => {
         break;
 
       case 'fill-rule':
-        if (['shape-fill', 'shape-gradient-fill'].includes(root.title)) {
-          visit(root, 'attribute', (attr) => {
+        if (['shape-fill', 'shape-gradient-fill'].includes(targetNode.title)) {
+          visit(targetNode, 'attribute', (attr) => {
             if (attr.title === 'fill-rule' && attr.children[0]?.value) {
               attr.children[0].value = styles[prop] as number;
             }
@@ -325,8 +369,8 @@ const apply = (root: ObjectNode, styles: NormalizedStyles): void => {
         break;
 
       case 'opacity':
-        if (['shape-stroke', 'shape-fill', 'shape-gradient-fill', 'shape-gradient-stroke'].includes(root.title)) {
-          visit(root, 'element', (node) => {
+        if (['shape-stroke', 'shape-fill', 'shape-gradient-fill', 'shape-gradient-stroke'].includes(targetNode.title)) {
+          visit(targetNode, 'element', (node) => {
             if (['stroke-opacity', 'opacity'].includes(node.title)) {
               visit(node, 'attribute', (attr, _, parent) => {
                 if (
@@ -344,8 +388,8 @@ const apply = (root: ObjectNode, styles: NormalizedStyles): void => {
         break;
 
       case 'hidden':
-        if (root.title.includes('shape') || root.title.includes('layer')) {
-          visit(root, 'attribute', (attr) => {
+        if (targetNode.title.includes('shape') || targetNode.title.includes('layer')) {
+          visit(targetNode, 'attribute', (attr) => {
             if (attr.title === 'hidden' && attr.children[0]) {
               attr.children[0].value = styles[prop] as boolean;
             }
@@ -356,11 +400,39 @@ const apply = (root: ObjectNode, styles: NormalizedStyles): void => {
 
       case 'linear-gradient-fill-color':
       case 'linear-gradient-stroke-color':
-        applyGradient(root, styles[prop] as number[], 'linear');
+        applyGradient(targetNode, styles[prop] as number[], 'linear');
         break;
       case 'radial-gradient-fill-color':
       case 'radial-gradient-stroke-color':
-        applyGradient(root, styles[prop] as number[], 'radial');
+        applyGradient(targetNode, styles[prop] as number[], 'radial');
+        break;
+
+      case 'src':
+        if (targetNode.title === 'layer-image') {
+          const attr = targetNode.children.find((node) => node.title === 'image-id');
+          if (attr?.type === 'attribute') {
+            const imgId = attr.children[0]?.value;
+            visit(root, 'object', (object) => {
+              if (object.title === 'asset-image') {
+                const isSameImage = object.children.some(
+                  (node) =>
+                    node.title === 'id' && node.children[0]?.type === 'primitive' && node.children[0].value === imgId,
+                );
+                if (isSameImage) {
+                  visit(object, 'attribute', (attrNode) => {
+                    if (attrNode.title === 'embedded' && attrNode.children[0]) {
+                      attrNode.children[0].value = 0;
+                    } else if (attrNode.title === 'path' && attrNode.children[0]) {
+                      attrNode.children[0].value = '';
+                    } else if (attrNode.title === 'filename' && attrNode.children[0]) {
+                      attrNode.children[0].value = styles[prop] as string;
+                    }
+                  });
+                }
+              }
+            });
+          }
+        }
         break;
 
       default:
@@ -378,7 +450,7 @@ const relottieStyle: Plugin<[Options?], Root, Root> = (options: Options = { lss:
       const styles = normalizeStyles(node.children);
 
       for (const lastNode of lastNodes) {
-        apply(lastNode, styles);
+        apply(lastNode, styles, last);
       }
     });
   };
