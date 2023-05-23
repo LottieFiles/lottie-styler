@@ -1,5 +1,11 @@
 # @lottiefiles/relottie-style
 
+## 0.4.0
+
+### Minor Changes
+
+- ecb0b9e: feat: 🎸 ImageLayer 'src' property
+
 ## 0.3.0
 
 ### Minor Changes
