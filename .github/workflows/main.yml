@@ -53,6 +53,13 @@ jobs:
       - name: 🛡️ Test
         run: pnpm test
 
+      - name: 🌐 Publish docs
+        if: success()
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./apps/docs/build
+
   release:
     needs: validate
     runs-on: ubuntu-latest
@@ -94,9 +101,9 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-      - name: 🌐 Publish docs
-        if: success()
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./apps/docs/dist
+      # - name: 🌐 Publish docs
+      #   if: success()
+      #   uses: peaceiris/actions-gh-pages@v3
+      #   with:
+      #     github_token: ${{ secrets.GITHUB_TOKEN }}
+      #     publish_dir: ./apps/docs/build
