@@ -75,7 +75,7 @@ GradientFillShape {
 }
 `;
 
-export function Playground(): JSX.Element {
+export default function Playground(): JSX.Element {
   const [lss, setLss] = React.useState(initialLssCode);
 
   const lottie = useLottie();
