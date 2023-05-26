@@ -17,32 +17,33 @@ interface FeatureItem {
 
 const FeatureList: FeatureItem[] = [
   {
-    title: 'Easy to Use',
+    title: 'Adapt Your Animation Styles Dynamically',
     Svg: require('@site/static/img/undraw_docusaurus_mountain.svg').default,
     description: (
       <>
-        Docusaurus was designed from the ground up to be easily installed and used to get your website up and running
-        quickly.
+        With LSS, you gain the power to dynamically modify your animation styles. This flexibility allows you to
+        instantly adapt to changes, making your animations as responsive as they are visually compelling.
       </>
     ),
   },
   {
-    title: 'Focus on What Matters',
+    title: 'Style Animations Instantaneously',
     Svg: require('@site/static/img/undraw_docusaurus_tree.svg').default,
     description: (
       <>
-        Docusaurus lets you focus on your docs, and we&apos;ll do the chores. Go ahead and move your docs into the{' '}
-        <code>docs</code> directory.
+        LSS offers you the capacity to style your animations on-the-fly. With real-time modifications at your
+        fingertips, you can swiftly respond to changes and keep your animations looking fresh and engaging at all times.
       </>
     ),
   },
   {
-    title: 'Powered by React',
+    title: 'Unified Theming for All Animations',
     Svg: require('@site/static/img/undraw_docusaurus_react.svg').default,
     description: (
       <>
-        Extend or customize your website layout by reusing React. Docusaurus can be extended while reusing the same
-        header and footer.
+        Embrace the power of consistency with LSS. Our tool allows you to create a single, cohesive theme that can be
+        applied across all your animations. This unified approach not only enhances your brand's visual identity but
+        also simplifies the theming process, saving you valuable time and effort.
       </>
     ),
   },

@@ -2,46 +2,43 @@
 sidebar_position: 1
 ---
 
-# Tutorial Intro
+# Intro
 
-Let's discover **Docusaurus in less than 5 minutes**.
+This guide will assist you in understanding how to theme and style your Lottie animations using our innovative tool:
+Lottie Style Sheets (LSS). The LSS specs allow you to seamlessly adapt the look and feel of your animations, much like
+CSS does for HTML elements.
 
-## Getting Started
+## Overview
 
-Get started by **creating a new site**.
+Lottie Theming was designed to revolutionize the way designers and developers interact with Lottie animations. The tool
+introduces LSS, a powerful means of customizing and theming animations. It leverages the simplicity and flexibility of
+CSS syntax to modify properties of animations, including colors, stroke widths, gradients, and more, while ensuring the
+animations remain lightweight and high-performing.
 
-Or **try Docusaurus immediately** with **[docusaurus.new](https://docusaurus.new)**.
+## Prerequisites
 
-### What you'll need
+- [Node.js](https://nodejs.org/en/download/) version 18 or above
+- [npm](https://www.npmjs.com/get-npm) version 6 or above
 
-- [Node.js](https://nodejs.org/en/download/) version 16.14 or above:
-  - When installing Node.js, you are recommended to check all checkboxes related to dependencies.
-
-## Generate a new site
-
-Generate a new Docusaurus site using the **classic template**.
-
-The classic template will automatically be added to your project after you run the command:
-
-```bash
-npm init docusaurus@latest my-website classic
-```
-
-You can type this command into Command Prompt, Powershell, Terminal, or any other integrated terminal of your code editor.
-
-The command also installs all necessary dependencies you need to run Docusaurus.
-
-## Start your site
-
-Run the development server:
+## Usage
 
 ```bash
-cd my-website
-npm run start
+npm install @lottiefiles/lottie-styler
 ```
 
-The `cd` command changes the directory you're working with. In order to work with your newly created Docusaurus site, you'll need to navigate the terminal there.
+```js
+import { createStyler } from '@lottiefiles/lottie-styler';
+import lottieJSON from './lottie.json';
 
-The `npm run start` command builds your website locally and serves it through a development server, ready for you to view at http://localhost:3000/.
+const styler = createStyler(lottieJSON);
 
-Open `docs/intro.md` (this page) and edit some lines: the site **reloads automatically** and displays your changes.
+const lottieStyleSheets = `
+    #my-fill-shape {
+        fill-color: red;
+    }
+`;
+
+styler.apply(lottieStyleSheets).then((styledLottieJSON) => {
+  // Use the styledLottieJSON to render the styled animation
+});
+```
