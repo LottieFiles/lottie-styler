@@ -72,6 +72,11 @@ const config = {
             label: 'Docs',
           },
           {
+            href: '/playground',
+            label: 'Playground',
+            position: 'right',
+          },
+          {
             href: 'https://github.com/lottiefiles/lottie-styler',
             label: 'GitHub',
             position: 'right',
@@ -85,8 +90,12 @@ const config = {
             title: 'Docs',
             items: [
               {
-                label: 'Tutorial',
+                label: 'Documentation',
                 to: '/docs/intro',
+              },
+              {
+                label: 'Playground',
+                to: '/playground',
               },
             ],
           },
