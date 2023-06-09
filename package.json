@@ -1,7 +1,6 @@
 {
   "name": "@lottiefiles/lottie-styler-monorepo",
-  "license": "UNLICENSED",
-  "private": true,
+  "license": "MIT",
   "workspaces": [
     "packages/*"
   ],

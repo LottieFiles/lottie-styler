@@ -3,7 +3,7 @@
   "version": "0.4.0",
   "type": "module",
   "description": "",
-  "license": "UNLICENSED",
+  "license": "MIT",
   "engines": {
     "node": ">=18"
   },
@@ -42,6 +42,6 @@
     "vfile": "5.3.7"
   },
   "publishConfig": {
-    "access": "restricted"
+    "access": "public"
   }
 }
