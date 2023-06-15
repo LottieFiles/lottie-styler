@@ -2,7 +2,14 @@
   "name": "@lottiefiles/relottie-style",
   "version": "0.4.0",
   "type": "module",
-  "description": "",
+  "description": "relottie style transformer",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/LottieFiles/lottie-styler.git",
+    "directory": "packages/relottie-style"
+  },
+  "homepage": "https://github.com/LottieFiles/lottie-styler/tree/main/packages/relottie-style#readme",
+  "author": "Abdelrahman Ashraf <a.theashraf@gmail.com> (https://theashraf.com)",
   "license": "MIT",
   "engines": {
     "node": ">=18"
@@ -38,7 +45,6 @@
     "@jest/globals": "28.1.3",
     "@lottiefiles/jest-config": "1.0.0",
     "@lottiefiles/last": "0.12.1",
-    "@lottiefiles/lottie-types": "1.0.1",
     "@lottiefiles/relottie": "0.22.0",
     "@types/gradient-parser": "0.1.2",
     "@types/jest": "28.1.5",

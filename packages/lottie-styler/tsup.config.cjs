@@ -18,4 +18,5 @@ module.exports = defineConfig({
   splitting: false,
   target: ['es2020', 'node18'],
   tsconfig: 'tsconfig.build.json',
+  noExternal: ['@lottiefiles/relottie'],
 });
