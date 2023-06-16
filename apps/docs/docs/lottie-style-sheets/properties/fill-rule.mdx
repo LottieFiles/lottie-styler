@@ -1,0 +1,58 @@
+# fill-rule
+
+The `fill-rule` property in Lottie Style Sheets (LSS) specifies how to fill a path. It's used to determine the
+"insideness" of a point. The `fill-rule` can have two values: `nonzero` (Non Zero) and `evenodd` (Even Odd).
+
+## Using `nonzero`
+
+import Example from '@site/src/components/Example';
+
+<Example
+  code={'\nFillShape {\n fill-rule: nonzero; \n}'}
+  fileUrl="https://assets10.lottiefiles.com/packages/lf20_xUhmAOKNrC.json"
+/>
+
+In this example, all paths of type `FillShape` will use the "nonzero" fill-rule.
+
+### NonZero Fill Rule
+
+The `nonzero` fill-rule is a way to fill everything, irrespective of the intersections or direction of paths. With this
+fill rule, all areas of the `FillShape` are colored, creating an effect similar to an OR operation. It's the equivalent
+of saying, "fill all areas of the shape that are not zero".
+
+Here's an example:
+
+```css
+FillShape {
+  fill-rule: nonzero;
+}
+```
+
+In this example, the `FillShape` will be filled using the "nonzero" fill-rule.
+
+## Using `evenodd`
+
+```css
+FillShape {
+  fill-rule: evenodd;
+}
+```
+
+In this example, the `FillShape` will use the "evenodd" fill-rule.
+
+### EvenOdd Fill Rule
+
+The `evenodd` fill-rule colors the `FillShape` based on the intersections and path direction. It can be used to create
+"holes" in your shapes, as it alternates between coloring and not coloring each time a path is intersected. This rule is
+handy when you have complex paths with overlapping segments.
+
+Here's an example:
+
+```css
+FillShape {
+  fill-rule: evenodd;
+}
+```
+
+In this example, the `FillShape` will be filled using the "evenodd" fill-rule, creating interesting effects based on the
+intersections of the paths.
