@@ -1,0 +1,26 @@
+# opacity
+
+The `opacity` property in Lottie Style Sheets (LSS) sets the transparency level of a layer or shape. The value can range
+between 0.0 (fully transparent) and 1.0 (fully opaque).
+
+In addition to decimal values, the `opacity` property also accepts percentage values, much like in CSS. Therefore, you
+can also set the opacity from 0% (fully transparent) to 100% (fully opaque).
+
+Here's how you can use the opacity property:
+
+import Example from '@site/src/components/Example';
+
+<Example code="FillShape { opacity: 0.5 }" fileUrl="https://assets2.lottiefiles.com/packages/lf20_ocoxrlkm.json" />
+
+In this example, the `FillShape` will have 50% transparency (or 50% opacity).
+
+Or, using percentage:
+
+```css
+FillShape {
+  opacity: 50%;
+}
+```
+
+This example is equivalent to the previous one. The `SolidColorLayer` will again have 50% transparency (or 50% opacity).
+Note that in LSS, "0.5" and "50%" are considered equivalent values for opacity.
