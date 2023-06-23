@@ -1,5 +1,13 @@
 # @lottiefiles/relottie-style
 
+## 0.4.1
+
+### Patch Changes
+
+- 345ef60: chore: 🤖 relottie upgrade
+- Updated dependencies [345ef60]
+  - @lottiefiles/lottie-style-sheets@0.0.1
+
 ## 0.4.0
 
 ### Minor Changes

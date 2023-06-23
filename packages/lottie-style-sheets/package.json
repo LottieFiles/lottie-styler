@@ -1,6 +1,6 @@
 {
   "name": "@lottiefiles/lottie-style-sheets",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "type": "module",
   "description": "lottie style sheets ast definition and parser",
   "repository": {
