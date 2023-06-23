@@ -4,7 +4,7 @@
 
 /* eslint-disable padding-line-between-statements */
 
-import type { ObjectNode, Root } from '@lottiefiles/last';
+import type { ArrayNodeValue, ObjectNode, Root } from '@lottiefiles/last';
 import { parse as parseLss } from '@lottiefiles/lottie-style-sheets';
 import type { Declaration } from '@lottiefiles/lottie-style-sheets';
 import { colord, extend } from 'colord';
@@ -13,7 +13,8 @@ import namesPlugin from 'colord/plugins/names';
 import * as parsel from 'parsel-js';
 import { parse as parseValue } from 'postcss-values-parser';
 import type { Transformer, Plugin } from 'unified';
-import { visit } from 'unist-util-visit';
+import type { VisitorResult } from 'unist-util-visit';
+import { EXIT, visit, CONTINUE } from 'unist-util-visit';
 
 import { applyGradient, isLinearGradient, isRadialGradient, normalizeGradient } from './gradient';
 
@@ -303,10 +304,19 @@ const apply = (targetNode: ObjectNode, styles: NormalizedStyles, root: Root): vo
 
         if (targetNode.title === 'shape-fill') {
           if (Array.isArray(rgbaArray)) {
-            visit(targetNode, 'primitive', (node, index, parent) => {
-              if (parent?.title === 'color-rgba-children' && typeof index === 'number') {
-                node.value = rgbaArray[index] as number;
+            visit(targetNode, 'array', (node): VisitorResult => {
+              const title = node.title as string;
+
+              if (title === 'color-rgba-children' && node.children.length === 4) {
+                node.children = node.children.map((child, index) => ({
+                  ...child,
+                  value: rgbaArray[index],
+                })) as ArrayNodeValue[];
+
+                return EXIT;
               }
+
+              return CONTINUE;
             });
           }
         } else if (targetNode.title === 'layer-solid-color') {
@@ -327,13 +337,23 @@ const apply = (targetNode: ObjectNode, styles: NormalizedStyles, root: Root): vo
 
       case 'stroke-color':
         if (targetNode.title === 'shape-stroke') {
-          const rgba = styles[prop];
+          // eslint-disable-next-line @typescript-eslint/no-shadow
+          const rgbaArray = styles[prop];
 
-          if (Array.isArray(rgba)) {
-            visit(targetNode, 'primitive', (node, index, parent) => {
-              if (parent?.title === 'static-value-children' && typeof index === 'number') {
-                node.value = rgba[index] as number;
+          if (Array.isArray(rgbaArray)) {
+            visit(targetNode, 'array', (node): VisitorResult => {
+              const title = node.title as string;
+
+              if (title === 'static-values-children' && node.children.length === 4) {
+                node.children = node.children.map((child, index) => ({
+                  ...child,
+                  value: rgbaArray[index],
+                })) as ArrayNodeValue[];
+
+                return EXIT;
               }
+
+              return CONTINUE;
             });
           }
         }
@@ -361,7 +381,7 @@ const apply = (targetNode: ObjectNode, styles: NormalizedStyles, root: Root): vo
       case 'fill-rule':
         if (['shape-fill', 'shape-gradient-fill'].includes(targetNode.title)) {
           visit(targetNode, 'attribute', (attr) => {
-            if (attr.title === 'fill-rule' && attr.children[0]?.value) {
+            if (attr.title === 'fill-rule-value' && attr.children[0]?.value) {
               attr.children[0].value = styles[prop] as number;
             }
           });

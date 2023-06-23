@@ -3,8 +3,9 @@
  */
 
 import '@uiw/react-textarea-code-editor/dist.css';
-import { createStyler } from '@lottiefiles/lottie-styler';
 import { Player, Controls } from '@lottiefiles/react-lottie-player';
+import { relottie } from '@lottiefiles/relottie';
+import style from '@lottiefiles/relottie-style';
 import Layout from '@theme/Layout';
 import CodeEditor from '@uiw/react-textarea-code-editor';
 import React from 'react';
@@ -33,20 +34,27 @@ const useStyler = (lss: string, lottie?: string): string | undefined => {
 
   React.useEffect(() => {
     if (lottie) {
-      const styler = createStyler(lottie);
-
-      const style = async (lottieStyleSheets: string): Promise<void> => {
-        try {
-          const file = await styler.style(lottieStyleSheets);
-
-          setStyledLottie(file.toString());
-        } catch (err) {
+      relottie()
+        .data('settings', {
+          parse: {
+            messages: {
+              warning: false,
+            },
+            // eslint-disable-next-line no-warning-comments
+            // FIXME: when set to true, it doesn't work
+            position: true,
+          },
+        })
+        .use(style, {
+          lss,
+        })
+        .process(lottie)
+        .then(({ value }) => {
+          setStyledLottie(value);
+        })
+        .catch((err) => {
           console.error(err);
-          setStyledLottie(lottie);
-        }
-      };
-
-      style(lss);
+        });
     }
   }, [lss, lottie]);
 

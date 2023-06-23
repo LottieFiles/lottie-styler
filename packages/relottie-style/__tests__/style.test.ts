@@ -2,9 +2,9 @@
  * Copyright 2023 Design Barn Inc.
  */
 
-import { relottie } from '@lottiefiles/relottie';
+import { relottie } from '@lottiefiles/relottie/index';
 
-import style from '../dist';
+import style from '../dist/style';
 
 import bounce from './__fixtures__/bounce.json';
 import check from './__fixtures__/check.json';

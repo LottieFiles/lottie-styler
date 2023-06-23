@@ -2,13 +2,34 @@
   "name": "@lottiefiles/lottie-style-sheets",
   "version": "0.0.0",
   "type": "module",
-  "description": "",
+  "description": "lottie style sheets ast definition and parser",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/LottieFiles/lottie-styler.git",
+    "directory": "packages/lottie-style-sheets"
+  },
+  "homepage": "https://github.com/LottieFiles/lottie-styler/packages/lottie-style-sheets#readme",
+  "bugs": "https://github.com/LottieFiles/lottie-styler/issues",
+  "author": "LottieFiles",
+  "contributors": [
+    "Abdelrahman Ashraf <a.theashraf@gmail.com> (https://theashraf.com)"
+  ],
   "license": "MIT",
   "engines": {
     "node": ">=18"
   },
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "exports": {
+    ".": "./dist/index.js",
+    "./*": "./dist/*.js",
+    "./package.json": "./package.json"
+  },
+  "typesVersions": {
+    "*": {
+      "*": [
+        "dist/*"
+      ]
+    }
+  },
   "files": [
     "dist"
   ],
@@ -23,22 +44,17 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
-    "@lottiefiles/last": "0.12.1",
-    "@lottiefiles/lottie-types": "1.0.1",
-    "@lottiefiles/relottie": "0.22.0",
-    "@types/unist": "2.0.6",
-    "colord": "2.9.3",
-    "postcss": "8.4.21",
+    "postcss": "8.4.24",
     "unist-builder": "3.0.1",
-    "unist-util-is": "5.2.1",
     "unist-util-visit": "4.1.2"
   },
   "devDependencies": {
     "@jest/create-cache-key-function": "29.5.0",
     "@jest/globals": "28.1.3",
     "@lottiefiles/jest-config": "1.0.0",
-    "@types/jest": "28.1.5",
+    "@types/jest": "28.1.6",
     "@types/node": "18.0.4",
+    "@types/unist": "2.0.6",
     "esbuild": "0.14.49",
     "jest": "28.1.3",
     "ts-jest": "28.0.7",

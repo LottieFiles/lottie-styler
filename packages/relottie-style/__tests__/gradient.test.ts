@@ -2,7 +2,7 @@
  * Copyright 2023 Design Barn Inc.
  */
 
-import { isLinearGradient, isRadialGradient, normalizeGradient } from '..';
+import { isLinearGradient, isRadialGradient, normalizeGradient } from '../dist/gradient';
 
 describe('linear gradient color value', () => {
   const validCases = [

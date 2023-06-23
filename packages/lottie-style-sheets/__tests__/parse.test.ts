@@ -2,7 +2,7 @@
  * Copyright 2023 Design Barn Inc.
  */
 
-import { parse } from '..';
+import { parse } from '../dist/parse';
 
 import styles from './__fixtures__/styles.lss';
 

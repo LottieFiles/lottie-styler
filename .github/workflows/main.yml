@@ -29,14 +29,9 @@ jobs:
         with:
           cache: 'pnpm'
           node-version: 18
-          scope: '@lottiefiles'
-          registry-url: 'https://npm.pkg.github.com/'
-          always-auth: true
 
       - name: 📥 Download deps
         run: pnpm install
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.GPR_TOKEN }}
 
       - name: 🏗 Build
         run: pnpm build
@@ -71,16 +66,15 @@ jobs:
         with:
           cache: 'pnpm'
           node-version: 18
-          scope: '@lottiefiles'
-          registry-url: 'https://npm.pkg.github.com/'
 
       - name: 📥 Download deps
         run: pnpm install
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.GPR_TOKEN }}
 
       - name: 🏗 Build
         run: pnpm build
+
+      - name: Setup npmrc (Github Packages)
+        run: echo "//npm.pkg.github.com/:_authToken=${{ secrets.NPM_TOKEN }}" >> ~/.npmrc
 
       - name: 🚀 Release to Github Packages
         uses: changesets/action@v1
@@ -103,8 +97,6 @@ jobs:
         with:
           cache: 'pnpm'
           node-version: 18
-          scope: '@lottiefiles'
-          registry-url: https://registry.npmjs.org/
 
       - name: Setup npmrc (NPM)
         run: echo "//registry.npmjs.org/:_authToken=${{ secrets.NPMJS_TOKEN }}" >> ~/.npmrc

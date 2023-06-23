@@ -23,22 +23,27 @@ animations remain lightweight and high-performing.
 ## Usage
 
 ```bash
-npm install @lottiefiles/lottie-styler
+npm install @lottiefiles/relottie
+npm install @lottiefiles/lottie-style
 ```
 
 ```js
-import { createStyler } from '@lottiefiles/lottie-styler';
-import lottieJSON from './lottie.json';
+import style from '@lottiefiles/relottie-style';
+import {relottie} from '@lottiefiles/relottie';
+import lottie from './lottie.json';
 
-const styler = createStyler(lottieJSON);
-
-const lottieStyleSheets = `
+const lss = `
     #my-fill-shape {
         fill-color: red;
     }
 `;
 
-styler.apply(lottieStyleSheets).then((styledLottieJSON) => {
-  // Use the styledLottieJSON to render the styled animation
-});
+relottie()
+  .use(style, {
+    lss,
+  })
+  .process(JSON.stringify(lottieJSON))
+  .then(({ value }) => {
+    const styledLottie = JSON.parse(value);
+  });
 ```

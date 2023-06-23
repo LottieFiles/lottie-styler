@@ -1,3 +1,0 @@
-# Lottie Styler
-
-<!-- TODO: -->

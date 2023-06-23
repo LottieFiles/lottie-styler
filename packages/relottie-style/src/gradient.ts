@@ -120,11 +120,10 @@ export const applyGradient = (node: ObjectNode, gradient: number[], gradientType
 
   visit(node, 'collection', (collection) => {
     if (
-      collection.title === 'static-value' &&
+      collection.title === 'static-values' &&
       typeof collection.key === 'object' &&
       collection.key.value === 'k' &&
-      collection.children[0] &&
-      collection.children[0].title === 'static-value-children'
+      collection.children[0]
     ) {
       const childNode = collection.children[0];
 
