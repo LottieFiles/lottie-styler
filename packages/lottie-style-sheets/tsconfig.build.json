@@ -12,5 +12,5 @@
   },
 
   // Files included in compilation
-  "include": ["./src", "./types"]
+  "include": ["./src"]
 }
