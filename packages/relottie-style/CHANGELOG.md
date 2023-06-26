@@ -1,5 +1,13 @@
 # @lottiefiles/relottie-style
 
+## 0.4.3
+
+### Patch Changes
+
+- c92f512: chore: npm, gpr dual publishing
+- Updated dependencies [c92f512]
+  - @lottiefiles/lottie-style-sheets@0.0.2
+
 ## 0.4.2
 
 ### Patch Changes
