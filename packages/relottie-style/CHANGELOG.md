@@ -1,5 +1,11 @@
 # @lottiefiles/relottie-style
 
+## 0.4.2
+
+### Patch Changes
+
+- 56df3bd: chore: dual publishing (npm & gpr)
+
 ## 0.4.1
 
 ### Patch Changes
