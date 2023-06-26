@@ -1,5 +1,12 @@
 # @lottiefiles/relottie-style
 
+## 0.4.2
+
+### Patch Changes
+
+- Updated dependencies [514b9bc]
+  - @lottiefiles/lottie-style-sheets@0.0.2
+
 ## 0.4.1
 
 ### Patch Changes
