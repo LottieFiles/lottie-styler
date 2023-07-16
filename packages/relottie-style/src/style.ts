@@ -98,6 +98,9 @@ const querySelectorAll = (root: Root, selectors: string[]): ObjectNode[] => {
         } else if (node.name === 'ImageLayer') {
           type = 'layer-type';
           value = 2;
+        } else if (node.name === 'TextLayer') {
+          type = 'layer-type';
+          value = 5;
         }
 
         if (type && value) {
