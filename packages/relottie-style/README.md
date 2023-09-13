@@ -44,6 +44,8 @@ relottie()
 
 ## Lottie Style Sheets (LSS)
 
+To find out more about Lottie Style Sheets, check out the [LSS documentation](:\//TODO: Add link)
+
 ### Supported Selectors
 
 Lottie Style Sheets use selectors to target specific layers or shapes for styling. Here are the primary selector categories:
