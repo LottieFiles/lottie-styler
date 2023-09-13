@@ -14,10 +14,6 @@ Versatile Styling Properties: Supports a broad spectrum of styling properties fo
 
 Follow the specific `README.md` for each package for more detailed usage instructions.
 
-## Docs
-
-// TODO: Add docs link
-
 ## Demo 
 
 // TODO: Add demo link
