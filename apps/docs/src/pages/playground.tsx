@@ -3,12 +3,14 @@
  */
 
 import '@uiw/react-textarea-code-editor/dist.css';
-import { Player, Controls } from '@lottiefiles/react-lottie-player';
+
+import { DotLottiePlayer as Player } from '@dotlottie/react-player';
 import { relottie } from '@lottiefiles/relottie';
 import style from '@lottiefiles/relottie-style';
+import Editor from '@monaco-editor/react';
 import Layout from '@theme/Layout';
-import CodeEditor from '@uiw/react-textarea-code-editor';
 import React from 'react';
+import { Panel, PanelGroup, PanelResizeHandle } from 'react-resizable-panels';
 import { useAsyncFn, useSearchParam } from 'react-use';
 
 const useLottie = (): string | undefined => {
@@ -33,6 +35,14 @@ const useStyler = (lss: string, lottie?: string): string | undefined => {
   const [styledLottie, setStyledLottie] = React.useState(lottie);
 
   React.useEffect(() => {
+    let lssJSON = {};
+
+    try {
+      lssJSON = JSON.parse(lss);
+    } catch (_err) {
+      //
+    }
+
     if (lottie) {
       relottie()
         .data('settings', {
@@ -40,13 +50,10 @@ const useStyler = (lss: string, lottie?: string): string | undefined => {
             messages: {
               warning: false,
             },
-            // eslint-disable-next-line no-warning-comments
-            // FIXME: when set to true, it doesn't work
-            position: true,
           },
         })
         .use(style, {
-          lss,
+          lss: lssJSON,
         })
         .process(lottie)
         .then(({ value }) => {
@@ -61,86 +68,63 @@ const useStyler = (lss: string, lottie?: string): string | undefined => {
   return styledLottie;
 };
 
-const initialLssCode = `
-/* Lottie Style Sheets (.LSS) */
-#cloud{
- fill-color: red;
- opacity: 90%
-}
-.cloud-borders{ 
- stroke-color: black;
- stroke-width: 4;
- opacity: 0.3;
-}
-.sea{
- fill-color: #F3F666;
-}
-#solid-cloud{
- fill-color: rgba(255, 2, 243, 0.5);
-}
-GradientFillShape {
-  fill-color: radial-gradient(red 10%, blue 20%, green 40%, black 60%, yellow 70%, pink 100%);
-}
-`;
+const initialLssJson = {
+  '#cloud': {
+    'fill-color': 'red',
+    opacity: '90%',
+  },
+  '.cloud-borders': {
+    'stroke-color': 'black',
+    'stroke-width': '4',
+    opacity: '0.3',
+  },
+  '.sea': {
+    'fill-color': '#F3F666',
+  },
+  '#solid-cloud': {
+    'fill-color': 'rgba(255, 2, 243, 0.5)',
+  },
+  GradientFillShape: {
+    'fill-color': 'radial-gradient(red 10%, blue 20%, green 40%, black 60%, yellow 70%, pink 100%)',
+  },
+};
 
 export default function Playground(): JSX.Element {
-  const [lss, setLss] = React.useState(initialLssCode);
+  const [lss, setLss] = React.useState(() => JSON.stringify(initialLssJson, null, 2));
 
   const lottie = useLottie();
   const styledLottie = useStyler(lss, lottie);
 
   return (
     <Layout title="LSS Playground" description="Lottie Style Sheets Playground">
-      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-        <div style={{ display: 'flex', flexDirection: 'column', justifyItems: 'center', textAlign: 'center' }}>
-          <h2>Original</h2>
-          {lottie && (
-            <Player autoplay loop src={lottie} style={{ height: '300px', width: '300px' }}>
-              <Controls visible={true} buttons={['play', 'repeat', 'frame', 'debug']} />
-            </Player>
-          )}
-        </div>
-        <div
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-            justifyItems: 'center',
-            justifyContent: 'center',
-            textAlign: 'center',
-          }}
-        >
-          <h2>Lottie Style Sheets (.LSS)</h2>
-          <CodeEditor
-            value={lss}
-            language="css"
-            placeholder={`/* Lottie Style Sheets (.LSS) */\n\n#cloud{\n fill-color: red;\n}`}
-            onChange={(event: React.ChangeEvent<HTMLTextAreaElement>): void => {
-              setLss(event.target.value);
+      <PanelGroup direction="horizontal" className="h-full">
+        <Panel minSize={80}>
+          <Editor
+            className="flex-1 h-full"
+            language={'json'}
+            width="100%"
+            theme="vs-dark"
+            options={{
+              fontSize: 15,
+              formatOnPaste: true,
+              formatOnType: true,
+              minimap: {
+                enabled: false,
+              },
             }}
-            minHeight={300}
-            style={{
-              minWidth: '400px',
-              fontSize: 16,
-              fontFamily: 'ui-monospace,SFMono-Regular,SF Mono,Consolas,Liberation Mono,Menlo,monospace',
+            loading="Loading..."
+            value={lss}
+            onChange={(value): void => {
+              setLss(value);
             }}
           />
-        </div>
-        <div
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-            justifyItems: 'center',
-            textAlign: 'center',
-          }}
-        >
-          <h2>Styled Lottie</h2>
-          {styledLottie && (
-            <Player autoplay loop src={styledLottie} style={{ height: '300px', width: 'auto' }}>
-              <Controls visible={true} buttons={['play', 'repeat', 'frame', 'debug']} />
-            </Player>
-          )}
-        </div>
-      </div>
+        </Panel>
+        <PanelResizeHandle className="bg-gray-500 w-1" />
+        <Panel>
+          {lottie && <Player autoplay loop src={lottie}></Player>}
+          {styledLottie && <Player autoplay loop src={styledLottie}></Player>}
+        </Panel>
+      </PanelGroup>
     </Layout>
   );
 }
