@@ -4,7 +4,7 @@
 
 import '@uiw/react-textarea-code-editor/dist.css';
 
-import { DotLottiePlayer as Player } from '@dotlottie/react-player';
+import { Player } from '@lottiefiles/react-lottie-player';
 import { relottie } from '@lottiefiles/relottie';
 import style from '@lottiefiles/relottie-style';
 import Editor from '@monaco-editor/react';

@@ -53,7 +53,7 @@ importers:
       '@docusaurus/core': 2.4.1
       '@docusaurus/module-type-aliases': 2.4.1
       '@docusaurus/preset-classic': 2.4.1
-      '@dotlottie/react-player': ^1.4.6
+      '@lottiefiles/react-lottie-player': ^3.5.3
       '@lottiefiles/relottie': 1.0.0
       '@lottiefiles/relottie-style': workspace:*
       '@mdx-js/react': ^1.6.22
@@ -73,7 +73,7 @@ importers:
     dependencies:
       '@docusaurus/core': 2.4.1_3tgeifm2vmwrlpqlopppsnjtcu
       '@docusaurus/preset-classic': 2.4.1_3tgeifm2vmwrlpqlopppsnjtcu
-      '@dotlottie/react-player': 1.4.6_react@17.0.2
+      '@lottiefiles/react-lottie-player': 3.5.3_react@17.0.2
       '@lottiefiles/relottie': 1.0.0
       '@lottiefiles/relottie-style': link:../../packages/relottie-style
       '@mdx-js/react': 1.6.22_react@17.0.2
@@ -3174,14 +3174,6 @@ packages:
       - webpack-cli
     dev: false
 
-  /@dotlottie/react-player/1.4.6_react@17.0.2:
-    resolution: {integrity: sha512-WiPi6aijaPPKjbxsCbmnsB9krXkiFFtfM3agH8CKVR9FY6HPha1ayMEHrkUe3E9ZvhPYr9S0JdrERy4eOVpMXQ==}
-    peerDependencies:
-      react: ^16.8.0 || ^17.0.0 || ^18.0.0
-    dependencies:
-      react: 17.0.2
-    dev: false
-
   /@endemolshinegroup/cosmiconfig-typescript-loader/3.0.2_zmjss6mecb4soo3dpdlecld3xa:
     resolution: {integrity: sha512-QRVtqJuS1mcT56oHpVegkKBlgtWjXw/gHNWO3eL9oyB5Sc7HBoc2OLG/nYpVfT/Jejvo3NUrD0Udk7XgoyDKkA==}
     engines: {node: '>=10.0.0'}
@@ -4069,6 +4061,15 @@ packages:
       prettier-plugin-prisma: 3.10.0_prettier@2.7.1
       prettier-plugin-sh: 0.8.1_prettier@2.7.1
     dev: true
+
+  /@lottiefiles/react-lottie-player/3.5.3_react@17.0.2:
+    resolution: {integrity: sha512-6pGbiTMjGnPddR1ur8M/TIDCiogZMc1aKIUbMEKXKAuNeYwZ2hvqwBJ+w5KRm88ccdcU88C2cGyLVsboFlSdVQ==}
+    peerDependencies:
+      react: 16 - 18
+    dependencies:
+      lottie-web: 5.12.2
+      react: 17.0.2
+    dev: false
 
   /@lottiefiles/relottie-parse/1.0.0:
     resolution: {integrity: sha512-V1Ykdx82wqsO5dcuNJtofOe/BaObLHpBj2h0iWY2MkaePvgL98OR+sfSbi7oHtsfOOc1OefSrdfK1wwJJtvbpA==}
@@ -12753,6 +12754,10 @@ packages:
     hasBin: true
     dependencies:
       js-tokens: 4.0.0
+
+  /lottie-web/5.12.2:
+    resolution: {integrity: sha512-uvhvYPC8kGPjXT3MyKMrL3JitEAmDMp30lVkuq/590Mw9ok6pWcFCwXJveo0t5uqYw1UREQHofD+jVpdjBv8wg==}
+    dev: false
 
   /lower-case/2.0.2:
     resolution: {integrity: sha512-7fm3l3NAF9WfN6W3JOmf5drwpVqX78JtoGJ3A6W0a6ZnldM41w2fV5D490psKFTpMds8TJse/eHLFFsNHHjHgg==}
