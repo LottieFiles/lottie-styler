@@ -6,11 +6,11 @@
     "node": ">=18"
   },
   "scripts": {
-    "build": "docusaurus build",
     "clear": "docusaurus clear",
     "deploy": "docusaurus deploy",
     "dev": "docusaurus start",
     "docusaurus": "docusaurus",
+    "run-build": "docusaurus build",
     "serve": "docusaurus serve",
     "swizzle": "docusaurus swizzle",
     "typecheck": "tsc",
