@@ -1,5 +1,11 @@
 # @lottiefiles/relottie-style
 
+## 0.5.0
+
+### Minor Changes
+
+- 22eb234: refactor: 💡 lss css in js representation
+
 ## 0.4.3
 
 ### Patch Changes

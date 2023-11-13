@@ -5,8 +5,6 @@
 /* eslint-disable padding-line-between-statements */
 
 import type { ArrayNodeValue, ObjectNode, Root } from '@lottiefiles/last';
-import { parse as parseLss } from '@lottiefiles/lottie-style-sheets';
-import type { Declaration } from '@lottiefiles/lottie-style-sheets';
 import { colord, extend } from 'colord';
 import namesPlugin from 'colord/plugins/names';
 // eslint-disable-next-line import/no-namespace
@@ -20,8 +18,10 @@ import { applyGradient, isLinearGradient, isRadialGradient, normalizeGradient } 
 
 extend([namesPlugin]);
 
+export type LottieStyleSheet = Record<string, Record<string, string>>;
+
 export interface Options {
-  lss: string;
+  lss: LottieStyleSheet;
 }
 
 type AttributeType = 'layer-xml-id' | 'css-class' | 'name' | 'layer-type' | 'shape-type';
@@ -216,63 +216,63 @@ const getSrcUrl = (value: string): string => {
   return '';
 };
 
-const normalizeStyles = (declarations: Declaration[]): NormalizedStyles => {
+const normalizeStyles = (properties: Record<string, string>): NormalizedStyles => {
   const styles: NormalizedStyles = {};
 
-  for (const declaration of declarations) {
-    if (isColorProperty(declaration.property) && colord(declaration.value).isValid()) {
-      const rgbaColor = colord(declaration.value).rgba;
+  for (const [property, value] of Object.entries(properties)) {
+    if (isColorProperty(property) && colord(value).isValid()) {
+      const rgbaColor = colord(value).rgba;
 
-      const value: RGBAColor = [rgbaColor.r / 255, rgbaColor.g / 255, rgbaColor.b / 255, rgbaColor.a];
+      const colorValue: RGBAColor = [rgbaColor.r / 255, rgbaColor.g / 255, rgbaColor.b / 255, rgbaColor.a];
 
-      switch (declaration.property) {
+      switch (property) {
         case 'fill-color':
-          styles['fill-color'] = value;
+          styles['fill-color'] = colorValue;
           break;
 
         case 'stroke-color':
-          styles['stroke-color'] = value;
+          styles['stroke-color'] = colorValue;
           break;
 
         default:
           break;
       }
-    } else if (isColorProperty(declaration.property) && isLinearGradient(declaration.value)) {
-      const value = normalizeGradient(declaration.value);
+    } else if (isColorProperty(property) && isLinearGradient(value)) {
+      const gradientValue = normalizeGradient(value);
 
-      switch (declaration.property) {
+      switch (property) {
         case 'fill-color':
-          styles['linear-gradient-fill-color'] = value;
+          styles['linear-gradient-fill-color'] = gradientValue;
           break;
 
         case 'stroke-color':
-          styles['linear-gradient-stroke-color'] = value;
+          styles['linear-gradient-stroke-color'] = gradientValue;
           break;
 
         default:
           break;
       }
-    } else if (isColorProperty(declaration.property) && isRadialGradient(declaration.value)) {
-      const value = normalizeGradient(declaration.value);
+    } else if (isColorProperty(property) && isRadialGradient(value)) {
+      const gradientValue = normalizeGradient(value);
 
-      switch (declaration.property) {
+      switch (property) {
         case 'fill-color':
-          styles['radial-gradient-fill-color'] = value;
+          styles['radial-gradient-fill-color'] = gradientValue;
           break;
 
         case 'stroke-color':
-          styles['radial-gradient-stroke-color'] = value;
+          styles['radial-gradient-stroke-color'] = gradientValue;
           break;
 
         default:
           break;
       }
-    } else if (declaration.property === 'stroke-width') {
-      styles['stroke-width'] = Number(declaration.value);
-    } else if (declaration.property === 'fill-rule' && isValidFillRule(declaration.value)) {
-      styles['fill-rule'] = normalizeFillRule(declaration.value);
-    } else if (declaration.property === 'opacity') {
-      const opacity = normalizeOpacity(declaration.value);
+    } else if (property === 'stroke-width') {
+      styles['stroke-width'] = Number(value);
+    } else if (property === 'fill-rule' && isValidFillRule(value)) {
+      styles['fill-rule'] = normalizeFillRule(value);
+    } else if (property === 'opacity') {
+      const opacity = normalizeOpacity(value);
 
       if (Number.isNaN(opacity)) {
         continue;
@@ -285,10 +285,10 @@ const normalizeStyles = (declarations: Declaration[]): NormalizedStyles => {
       } else {
         styles['opacity'] = opacity;
       }
-    } else if (declaration.property === 'visibility') {
-      styles['hidden'] = declaration.value === 'hidden';
-    } else if (declaration.property === 'src') {
-      const url = getSrcUrl(declaration.value);
+    } else if (property === 'visibility') {
+      styles['hidden'] = value === 'hidden';
+    } else if (property === 'src') {
+      const url = getSrcUrl(value);
       if (isValidUrl(url)) {
         styles['src'] = url;
       }
@@ -299,8 +299,7 @@ const normalizeStyles = (declarations: Declaration[]): NormalizedStyles => {
 };
 
 const apply = (targetNode: ObjectNode, styles: NormalizedStyles, root: Root): void => {
-  // eslint-disable-next-line guard-for-in
-  for (const prop in styles) {
+  for (const prop of Object.keys(styles)) {
     switch (prop) {
       case 'fill-color':
         const rgbaArray = styles[prop];
@@ -464,18 +463,16 @@ const apply = (targetNode: ObjectNode, styles: NormalizedStyles, root: Root): vo
   }
 };
 
-const relottieStyle: Plugin<[Options?], Root, Root> = (options: Options = { lss: '' }) => {
+const relottieStyle: Plugin<[Options?], Root, Root> = (options: Options = { lss: {} }) => {
   const transformer: Transformer<Root> = async (last: Root): Promise<void> => {
-    const lssast = parseLss(options.lss);
-
-    visit(lssast, 'rule', (node) => {
-      const lastNodes = querySelectorAll(last, node.selectors);
-      const styles = normalizeStyles(node.children);
+    for (const [selector, properties] of Object.entries(options.lss)) {
+      const lastNodes = querySelectorAll(last, selector.split(',').filter(Boolean));
+      const styles = normalizeStyles(properties);
 
       for (const lastNode of lastNodes) {
         apply(lastNode, styles, last);
       }
-    });
+    }
   };
 
   return transformer;
