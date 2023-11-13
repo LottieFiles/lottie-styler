@@ -1,5 +1,11 @@
 # @lottiefiles/relottie-style
 
+## 0.6.0
+
+### Minor Changes
+
+- 7c9388c: feat: 🎸 TextLayer element selector
+
 ## 0.5.0
 
 ### Minor Changes
